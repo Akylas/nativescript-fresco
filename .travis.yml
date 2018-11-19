@@ -52,11 +52,13 @@ install:
     - npm uninstall nativescript-angular -D && npm install nativescript-angular@next -D
     - cd ../demo
     - npm install nativescript-dev-webpack@next -D
+    - ./node_modules/.bin/update-ns-webpack --deps --configs
     - npm install tns-core-modules@next -P
     - npm install nativescript-dev-typescript@next -D
     - npm install
     - cd ../demo-angular
     - npm install nativescript-dev-webpack@next -D
+    - ./node_modules/.bin/update-ns-webpack --deps --configs
     - npm install tns-core-modules@next -P
     - npm install nativescript-angular@next -P
     - npm install nativescript-dev-typescript@next -D
