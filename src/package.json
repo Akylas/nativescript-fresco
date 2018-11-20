@@ -12,7 +12,8 @@
   },
   "nativescript": {
     "platforms": {
-      "android": "4.0.0"
+      "android": "4.0.0",
+      "ios": "4.0.0"
     }
   },
   "devDependencies": {

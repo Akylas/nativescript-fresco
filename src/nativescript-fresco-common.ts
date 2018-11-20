@@ -1,5 +1,7 @@
-import { View, Property, booleanConverter } from "tns-core-modules/ui/core/view";
+import { View, Property, booleanConverter, Color } from "tns-core-modules/ui/core/view";
 import * as observableModule from "tns-core-modules/data/observable";
+
+export type Transition = 'fade' | 'curlUp';
 
 export namespace ScaleType {
     export const Center = "center";
@@ -53,6 +55,7 @@ export class EventData implements observableModule.EventData {
         this._object = value;
     }
 }
+export type Stretch = 'none' | 'fill' | 'aspectFill' | 'aspectFit';
 
 export class FrescoDrawee extends View {
     public static finalImageSetEvent: string = "finalImageSet";
@@ -84,6 +87,9 @@ export class FrescoDrawee extends View {
     public aspectRatio: number;
     public decodeWidth: number;
     public decodeHeight: number;
+
+
+    public readonly isLoading: boolean;
 
     public static imageUriProperty = new Property<FrescoDrawee, string>(
         {
@@ -308,6 +314,35 @@ export class FrescoDrawee extends View {
             },
         });
 
+    onlyTransitionIfRemote: boolean;
+    public static onlyTransitionIfRemoteProperty = new Property<FrescoDrawee, boolean>(
+        {
+            name: "onlyTransitionIfRemote",
+            defaultValue: undefined,
+            valueConverter: booleanConverter
+        });
+
+    tintColor: Color;
+    public static tintColorProperty = new Property<FrescoDrawee, Color>(
+        {
+            name: "tintColor",
+            defaultValue: undefined
+        });
+
+        transition: Transition;
+    public static transitionProperty = new Property<FrescoDrawee, Transition>(
+        {
+            name: "transition",
+            defaultValue: undefined
+        });
+        public stretch: Stretch = "aspectFit";
+        public static stretchProperty = new Property<FrescoDrawee, Stretch>(
+            {
+                name: "stretch",
+                defaultValue: "aspectFit"
+            });
+
+
     private onImageUriPropertyChanged(oldValue: string, newValue: string) {
         this.onImageUriChanged(oldValue, newValue);
     }
@@ -485,6 +520,7 @@ export class FrescoDrawee extends View {
     }
 
 
+
 }
 FrescoDrawee.imageUriProperty.register(FrescoDrawee);
 FrescoDrawee.placeholderImageUriProperty.register(FrescoDrawee);
@@ -508,3 +544,4 @@ FrescoDrawee.tapToRetryEnabledProperty.register(FrescoDrawee);
 FrescoDrawee.aspectRatioProperty.register(FrescoDrawee);
 FrescoDrawee.decodeWidthProperty.register(FrescoDrawee);
 FrescoDrawee.decodeHeightProperty.register(FrescoDrawee);
+FrescoDrawee.onlyTransitionIfRemoteProperty.register(FrescoDrawee);
