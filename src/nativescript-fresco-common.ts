@@ -1,547 +1,539 @@
-import { View, Property, booleanConverter, Color } from "tns-core-modules/ui/core/view";
+import {
+  View,
+  Property,
+  booleanConverter,
+  Color
+} from "tns-core-modules/ui/core/view";
 import * as observableModule from "tns-core-modules/data/observable";
+import { isIOS } from "tns-core-modules/platform";
 
-export type Transition = 'fade' | 'curlUp';
+export type Transition = "fade" | "curlUp";
 
-export namespace ScaleType {
-    export const Center = "center";
-    export const CenterCrop = "centerCrop";
-    export const CenterInside = "centerInside";
-    export const FitCenter = "fitCenter";
-    export const FitEnd = "fitEnd";
-    export const FitStart = "fitStart";
-    export const FitXY = "fitXY";
-    export const FocusCrop = "focusCrop";
+export enum ScaleType {
+  Center = "center",
+  CenterCrop = "centerCrop",
+  CenterInside = "centerInside",
+  FitCenter = "fitCenter",
+  FitEnd = "fitEnd",
+  FitStart = "fitStart",
+  FitXY = "fitXY",
+  FocusCrop = "focusCrop"
 }
 
 export interface AnimatedImage {
-    start(): void;
-    stop(): void;
-    isRunning(): boolean;
+  start(): void;
+  stop(): void;
+  isRunning(): boolean;
 }
 
 export interface ImageInfo {
-    getHeight(): number;
-    getWidth(): number;
+  getHeight(): number;
+  getWidth(): number;
 }
 
 export interface FrescoError {
-    getMessage(): string;
-    getErrorType(): string;
-    toString(): string;
+  getMessage(): string;
+  getErrorType(): string;
+  toString(): string;
 }
 
 export interface ImagePipelineConfigSetting {
-    isDownsampleEnabled?: boolean;
+  isDownsampleEnabled?: boolean;
 }
 
 export class EventData implements observableModule.EventData {
-    private _eventName: string;
-    private _object: any;
+  private _eventName: string;
+  private _object: any;
 
-    get eventName(): string {
-        return this._eventName;
-    }
+  get eventName(): string {
+    return this._eventName;
+  }
 
-    set eventName(value: string) {
-        this._eventName = value;
-    }
+  set eventName(value: string) {
+    this._eventName = value;
+  }
 
-    get object(): any {
-        return this._object;
-    }
+  get object(): any {
+    return this._object;
+  }
 
-    set object(value: any) {
-        this._object = value;
-    }
+  set object(value: any) {
+    this._object = value;
+  }
 }
-export type Stretch = 'none' | 'fill' | 'aspectFill' | 'aspectFit';
+export type Stretch = "none" | "fill" | "aspectFill" | "aspectFit";
 
-export class FrescoDrawee extends View {
-    public static finalImageSetEvent: string = "finalImageSet";
-    public static failureEvent: string = "failure";
-    public static intermediateImageFailedEvent: string = "intermediateImageFailed";
-    public static intermediateImageSetEvent: string = "intermediateImageSet";
-    public static releaseEvent: string = "release";
-    public static submitEvent: string = "submit";
+export class FrescoDraweeBase extends View {
+  public static finalImageSetEvent: string = "finalImageSet";
+  public static failureEvent: string = "failure";
+  public static intermediateImageFailedEvent: string =
+    "intermediateImageFailed";
+  public static intermediateImageSetEvent: string = "intermediateImageSet";
+  public static releaseEvent: string = "release";
+  public static submitEvent: string = "submit";
 
-    public imageUri: string;
-    public placeholderImageUri: string;
-    public failureImageUri: string;
-    public actualImageScaleType: string;
-    public fadeDuration: number;
-    public backgroundUri: string;
-    public progressiveRenderingEnabled: boolean;
-    public showProgressBar: boolean;
-    public progressBarColor: string;
-    public roundAsCircle: boolean;
-    public roundBottomRight: boolean;
-    public roundTopLeft: boolean;
-    public roundTopRight: boolean;
-    public roundBottomLeft: boolean;
-    public roundedCornerRadius: number;
-    public blurRadius: number;
-    public blurDownSampling: number;
-    public autoPlayAnimations: boolean;
-    public tapToRetryEnabled: boolean;
-    public aspectRatio: number;
-    public decodeWidth: number;
-    public decodeHeight: number;
+  public imageUri: string;
+  public placeholderImageUri: string;
+  public failureImageUri: string;
+  public actualImageScaleType: ScaleType;
+  public fadeDuration: number;
+  public backgroundUri: string;
+  public progressiveRenderingEnabled: boolean;
+  public showProgressBar: boolean;
+  public progressBarColor: string;
+  public roundAsCircle: boolean;
+  public roundBottomRight: boolean;
+  public roundTopLeft: boolean;
+  public roundTopRight: boolean;
+  public roundBottomLeft: boolean;
+  public roundedCornerRadius: number;
+  public blurRadius: number;
+  public blurDownSampling: number;
+  public autoPlayAnimations: boolean;
+  public tapToRetryEnabled: boolean;
+  public aspectRatio: number;
+  public decodeWidth: number;
+  public decodeHeight: number;
 
+  public readonly isLoading: boolean;
 
-    public readonly isLoading: boolean;
-
-    public static imageUriProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "imageUri",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onImageUriPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static placeholderImageUriProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "placeholderImageUri",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onPlaceholderImageUriPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static failureImageUriProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "failureImageUri",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onFailureImageUriPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static actualImageScaleTypeProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "actualImageScaleType",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onActualImageScaleTypePropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static fadeDurationProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "fadeDuration",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onFadeDurationPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static backgroundUriProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "backgroundUri",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onBackgroundUriPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static progressiveRenderingEnabledProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "progressiveRenderingEnabled",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onProgressiveRenderingEnabledPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static showProgressBarProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "showProgressBar",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onShowProgressBarPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static progressBarColorProperty = new Property<FrescoDrawee, string>(
-        {
-            name: "progressBarColor",
-            defaultValue: undefined,
-            valueConverter: (v) => v,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onProgressBarColorPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundAsCircleProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "roundAsCircle",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            affectsLayout: true,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundAsCirclePropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundTopLeftProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "roundTopLeft",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            affectsLayout: true,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundTopLeftPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundTopRightProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "roundTopRight",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            affectsLayout: true,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundTopRightPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundBottomLeftProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "roundBottomLeft",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundBottomLeftPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundBottomRightProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "roundBottomRight",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundBottomRightPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static roundedCornerRadiusProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "roundedCornerRadius",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onRoundedCornerRadiusPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static blurRadiusProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "blurRadius",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onBlurRadiusPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static blurDownSamplingProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "blurDownSampling",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onBlurDownSamplingPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static autoPlayAnimationsProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "autoPlayAnimations",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onAutoPlayAnimationsPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static tapToRetryEnabledProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "tapToRetryEnabled",
-            defaultValue: undefined,
-            valueConverter: booleanConverter,
-            valueChanged: (target, oldValue, newValue) => {
-                target.onTapToRetryEnabledPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static aspectRatioProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "aspectRatio",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onAspectRatioPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static decodeWidthProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "decodeWidth",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onDecodeWidthPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    public static decodeHeightProperty = new Property<FrescoDrawee, number>(
-        {
-            name: "decodeHeight",
-            defaultValue: undefined,
-            valueConverter: (v) => parseFloat(v),
-            valueChanged: (target, oldValue, newValue) => {
-                target.onDecodeHeightPropertyChanged(oldValue, newValue);
-            },
-        });
-
-    onlyTransitionIfRemote: boolean;
-    public static onlyTransitionIfRemoteProperty = new Property<FrescoDrawee, boolean>(
-        {
-            name: "onlyTransitionIfRemote",
-            defaultValue: undefined,
-            valueConverter: booleanConverter
-        });
-
-    tintColor: Color;
-    public static tintColorProperty = new Property<FrescoDrawee, Color>(
-        {
-            name: "tintColor",
-            defaultValue: undefined
-        });
-
-        transition: Transition;
-    public static transitionProperty = new Property<FrescoDrawee, Transition>(
-        {
-            name: "transition",
-            defaultValue: undefined
-        });
-        public stretch: Stretch = "aspectFit";
-        public static stretchProperty = new Property<FrescoDrawee, Stretch>(
-            {
-                name: "stretch",
-                defaultValue: "aspectFit"
-            });
-
-
-    private onImageUriPropertyChanged(oldValue: string, newValue: string) {
-        this.onImageUriChanged(oldValue, newValue);
+  public static imageUriProperty = new Property<FrescoDraweeBase, string>({
+    name: "imageUri",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onImageUriPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onPlaceholderImageUriPropertyChanged(oldValue: string, newValue: string) {
-        this.onPlaceholderImageUriChanged(oldValue, newValue);
+  public static placeholderImageUriProperty = new Property<
+  FrescoDraweeBase,
+    string
+  >({
+    name: "placeholderImageUri",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onPlaceholderImageUriPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onFailureImageUriPropertyChanged(oldValue: string, newValue: string) {
-        this.onFailureImageUriChanged(oldValue, newValue);
+  public static failureImageUriProperty = new Property<FrescoDraweeBase, string>({
+    name: "failureImageUri",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onFailureImageUriPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onActualImageScaleTypePropertyChanged(oldValue: string, newValue: string) {
-        this.onActualImageScaleTypeChanged(oldValue, newValue);
+  public static actualImageScaleTypeProperty = new Property<
+  FrescoDraweeBase,
+    string
+  >({
+    name: "actualImageScaleType",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onActualImageScaleTypePropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onFadeDurationPropertyChanged(oldValue: number, newValue: number) {
-        this.onFadeDurationChanged(oldValue, newValue);
+  public static fadeDurationProperty = new Property<FrescoDraweeBase, number>({
+    name: "fadeDuration",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onFadeDurationPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onBackgroundUriPropertyChanged(oldValue: string, newValue: string) {
-        this.onBackgroundUriChanged(oldValue, newValue);
+  public static backgroundUriProperty = new Property<FrescoDraweeBase, string>({
+    name: "backgroundUri",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onBackgroundUriPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onProgressiveRenderingEnabledPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onProgressiveRenderingEnabledChanged(oldValue, newValue);
+  public static progressiveRenderingEnabledProperty = new Property<
+    FrescoDraweeBase,
+    boolean
+  >({
+    name: "progressiveRenderingEnabled",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onProgressiveRenderingEnabledPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onShowProgressBarPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onShowProgressBarChanged(oldValue, newValue);
+  public static showProgressBarProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "showProgressBar",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onShowProgressBarPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onProgressBarColorPropertyChanged(oldValue: string, newValue: string) {
-        this.onProgressBarColorChanged(oldValue, newValue);
+  public static progressBarColorProperty = new Property<FrescoDraweeBase, string>({
+    name: "progressBarColor",
+    defaultValue: undefined,
+    valueConverter: v => v,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onProgressBarColorPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundAsCirclePropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onRoundAsCircleChanged(oldValue, newValue);
+  public static roundAsCircleProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "roundAsCircle",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    affectsLayout: true,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundAsCirclePropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundTopLeftPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onRoundTopLeftChanged(oldValue, newValue);
+  public static roundTopLeftProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "roundTopLeft",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    affectsLayout: true,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundTopLeftPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundTopRightPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onRoundTopRightChanged(oldValue, newValue);
+  public static roundTopRightProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "roundTopRight",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    affectsLayout: true,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundTopRightPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundBottomLeftPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onRoundBottomLeftChanged(oldValue, newValue);
+  public static roundBottomLeftProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "roundBottomLeft",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundBottomLeftPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundBottomRightPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onRoundBottomRightChanged(oldValue, newValue);
+  public static roundBottomRightProperty = new Property<FrescoDraweeBase, boolean>({
+    name: "roundBottomRight",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundBottomRightPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onRoundedCornerRadiusPropertyChanged(oldValue: number, newValue: number) {
-        this.onRoundedCornerRadiusChanged(oldValue, newValue);
+  public static roundedCornerRadiusProperty = new Property<
+    FrescoDraweeBase,
+    number
+  >({
+    name: "roundedCornerRadius",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onRoundedCornerRadiusPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onBlurRadiusPropertyChanged(oldValue: number, newValue: number) {
-        this.onBlurRadiusChanged(oldValue, newValue);
+  public static blurRadiusProperty = new Property<FrescoDraweeBase, number>({
+    name: "blurRadius",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onBlurRadiusPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onBlurDownSamplingPropertyChanged(oldValue: number, newValue: number) {
-        this.onBlurDownSamplingChanged(oldValue, newValue);
+  public static blurDownSamplingProperty = new Property<FrescoDraweeBase, number>({
+    name: "blurDownSampling",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onBlurDownSamplingPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onAutoPlayAnimationsPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onAutoPlayAnimationsPChanged(oldValue, newValue);
+  public static autoPlayAnimationsProperty = new Property<
+    FrescoDraweeBase,
+    boolean
+  >({
+    name: "autoPlayAnimations",
+    defaultValue: undefined,
+    valueConverter: booleanConverter,
+    valueChanged: (target, oldValue, newValue) => {
+      target.onAutoPlayAnimationsPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onTapToRetryEnabledPropertyChanged(oldValue: boolean, newValue: boolean) {
-        this.onTapToRetryEnabledChanged(oldValue, newValue);
+  public static tapToRetryEnabledProperty = new Property<FrescoDraweeBase, boolean>(
+    {
+      name: "tapToRetryEnabled",
+      defaultValue: undefined,
+      valueConverter: booleanConverter,
+      valueChanged: (target, oldValue, newValue) => {
+        target.onTapToRetryEnabledPropertyChanged(oldValue, newValue);
+      }
     }
+  );
 
-    private onAspectRatioPropertyChanged(oldValue: number, newValue: number) {
-        this.onAspectRatioChanged(oldValue, newValue);
+  public static aspectRatioProperty = new Property<FrescoDraweeBase, number>({
+    name: "aspectRatio",
+    defaultValue: undefined,
+    affectsLayout: isIOS,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onAspectRatioPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onDecodeWidthPropertyChanged(oldValue: number, newValue: number) {
-        this.onDecodeWidthChanged(oldValue, newValue);
+  public static decodeWidthProperty = new Property<FrescoDraweeBase, number>({
+    name: "decodeWidth",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onDecodeWidthPropertyChanged(oldValue, newValue);
     }
+  });
 
-    private onDecodeHeightPropertyChanged(oldValue: number, newValue: number) {
-        this.onDecodeHeightChanged(oldValue, newValue);
+  public static decodeHeightProperty = new Property<FrescoDraweeBase, number>({
+    name: "decodeHeight",
+    defaultValue: undefined,
+    valueConverter: v => parseFloat(v),
+    valueChanged: (target, oldValue, newValue) => {
+      target.onDecodeHeightPropertyChanged(oldValue, newValue);
     }
+  });
 
-    protected onImageUriChanged(oldValue: string, newValue: string) {
+  onlyTransitionIfRemote: boolean;
+  public static onlyTransitionIfRemoteProperty = new Property<
+    FrescoDraweeBase,
+    boolean
+  >({
+    name: "onlyTransitionIfRemote",
+    defaultValue: undefined,
+    valueConverter: booleanConverter
+  });
 
-    }
+  tintColor: Color;
+  public static tintColorProperty = new Property<FrescoDraweeBase, Color>({
+    name: "tintColor",
+    defaultValue: undefined
+  });
 
-    protected onPlaceholderImageUriChanged(oldValue: string, newValue: string) {
+  transition: Transition;
+  public static transitionProperty = new Property<FrescoDraweeBase, Transition>({
+    name: "transition",
+    defaultValue: undefined
+  });
+  public stretch: Stretch = "aspectFit";
+  public static stretchProperty = new Property<FrescoDraweeBase, Stretch>({
+    name: "stretch",
+    defaultValue: "aspectFit"
+  });
 
-    }
+  private onImageUriPropertyChanged(oldValue: string, newValue: string) {
+    this.onImageUriChanged(oldValue, newValue);
+  }
 
-    protected onFailureImageUriChanged(oldValue: string, newValue: string) {
+  private onPlaceholderImageUriPropertyChanged(
+    oldValue: string,
+    newValue: string
+  ) {
+    this.onPlaceholderImageUriChanged(oldValue, newValue);
+  }
 
-    }
+  private onFailureImageUriPropertyChanged(oldValue: string, newValue: string) {
+    this.onFailureImageUriChanged(oldValue, newValue);
+  }
 
-    protected onActualImageScaleTypeChanged(oldValue: string, newValue: string) {
+  private onActualImageScaleTypePropertyChanged(
+    oldValue: string,
+    newValue: string
+  ) {
+    this.onActualImageScaleTypeChanged(oldValue, newValue);
+  }
 
-    }
+  private onFadeDurationPropertyChanged(oldValue: number, newValue: number) {
+    this.onFadeDurationChanged(oldValue, newValue);
+  }
 
-    protected onFadeDurationChanged(oldValue: number, newValue: number) {
+  private onBackgroundUriPropertyChanged(oldValue: string, newValue: string) {
+    this.onBackgroundUriChanged(oldValue, newValue);
+  }
 
-    }
+  private onProgressiveRenderingEnabledPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onProgressiveRenderingEnabledChanged(oldValue, newValue);
+  }
 
-    protected onBackgroundUriChanged(oldValue: string, newValue: string) {
+  private onShowProgressBarPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onShowProgressBarChanged(oldValue, newValue);
+  }
 
-    }
+  private onProgressBarColorPropertyChanged(
+    oldValue: string,
+    newValue: string
+  ) {
+    this.onProgressBarColorChanged(oldValue, newValue);
+  }
 
-    protected onProgressiveRenderingEnabledChanged(oldValue: boolean, newValue: boolean) {
+  private onRoundAsCirclePropertyChanged(oldValue: boolean, newValue: boolean) {
+    this.onRoundAsCircleChanged(oldValue, newValue);
+  }
 
-    }
+  private onRoundTopLeftPropertyChanged(oldValue: boolean, newValue: boolean) {
+    this.onRoundTopLeftChanged(oldValue, newValue);
+  }
 
-    protected onShowProgressBarChanged(oldValue: boolean, newValue: boolean) {
+  private onRoundTopRightPropertyChanged(oldValue: boolean, newValue: boolean) {
+    this.onRoundTopRightChanged(oldValue, newValue);
+  }
 
-    }
+  private onRoundBottomLeftPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onRoundBottomLeftChanged(oldValue, newValue);
+  }
 
-    protected onProgressBarColorChanged(oldValue: string, newValue: string) {
+  private onRoundBottomRightPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onRoundBottomRightChanged(oldValue, newValue);
+  }
 
-    }
+  private onRoundedCornerRadiusPropertyChanged(
+    oldValue: number,
+    newValue: number
+  ) {
+    this.onRoundedCornerRadiusChanged(oldValue, newValue);
+  }
 
-    protected onRoundAsCircleChanged(oldValue: boolean, newValue: boolean) {
+  private onBlurRadiusPropertyChanged(oldValue: number, newValue: number) {
+    this.onBlurRadiusChanged(oldValue, newValue);
+  }
 
-    }
+  private onBlurDownSamplingPropertyChanged(
+    oldValue: number,
+    newValue: number
+  ) {
+    this.onBlurDownSamplingChanged(oldValue, newValue);
+  }
 
-    protected onRoundTopLeftChanged(oldValue: boolean, newValue: boolean) {
+  private onAutoPlayAnimationsPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onAutoPlayAnimationsPChanged(oldValue, newValue);
+  }
 
-    }
+  private onTapToRetryEnabledPropertyChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {
+    this.onTapToRetryEnabledChanged(oldValue, newValue);
+  }
 
-    protected onRoundTopRightChanged(oldValue: boolean, newValue: boolean) {
+  private onAspectRatioPropertyChanged(oldValue: number, newValue: number) {
+    this.onAspectRatioChanged(oldValue, newValue);
+  }
 
-    }
+  private onDecodeWidthPropertyChanged(oldValue: number, newValue: number) {
+    this.onDecodeWidthChanged(oldValue, newValue);
+  }
 
-    protected onRoundBottomLeftChanged(oldValue: boolean, newValue: boolean) {
+  private onDecodeHeightPropertyChanged(oldValue: number, newValue: number) {
+    this.onDecodeHeightChanged(oldValue, newValue);
+  }
 
-    }
+  protected onImageUriChanged(oldValue: string, newValue: string) {}
 
-    protected onRoundBottomRightChanged(oldValue: boolean, newValue: boolean) {
+  protected onPlaceholderImageUriChanged(oldValue: string, newValue: string) {}
 
-    }
+  protected onFailureImageUriChanged(oldValue: string, newValue: string) {}
 
-    protected onRoundedCornerRadiusChanged(oldValue: number, newValue: number) {
+  protected onActualImageScaleTypeChanged(oldValue: string, newValue: string) {}
 
-    }
+  protected onFadeDurationChanged(oldValue: number, newValue: number) {}
 
-    protected onBlurRadiusChanged(oldValue: number, newValue: number) {
+  protected onBackgroundUriChanged(oldValue: string, newValue: string) {}
 
-    }
+  protected onProgressiveRenderingEnabledChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {}
 
-    protected onBlurDownSamplingChanged(oldValue: number, newValue: number) {
+  protected onShowProgressBarChanged(oldValue: boolean, newValue: boolean) {}
 
-    }
+  protected onProgressBarColorChanged(oldValue: string, newValue: string) {}
 
-    protected onAutoPlayAnimationsPChanged(oldValue: boolean, newValue: boolean) {
+  protected onRoundAsCircleChanged(oldValue: boolean, newValue: boolean) {}
 
-    }
+  protected onRoundTopLeftChanged(oldValue: boolean, newValue: boolean) {}
 
-    protected onTapToRetryEnabledChanged(oldValue: boolean, newValue: boolean) {
+  protected onRoundTopRightChanged(oldValue: boolean, newValue: boolean) {}
 
-    }
+  protected onRoundBottomLeftChanged(oldValue: boolean, newValue: boolean) {}
 
-    protected onAspectRatioChanged(oldValue: number, newValue: number) {
+  protected onRoundBottomRightChanged(oldValue: boolean, newValue: boolean) {}
 
-    }
+  protected onRoundedCornerRadiusChanged(oldValue: number, newValue: number) {}
 
-    protected onDecodeWidthChanged(oldValue: number, newValue: number) {
+  protected onBlurRadiusChanged(oldValue: number, newValue: number) {}
 
-    }
+  protected onBlurDownSamplingChanged(oldValue: number, newValue: number) {}
 
-    protected onDecodeHeightChanged(oldValue: number, newValue: number) {
+  protected onAutoPlayAnimationsPChanged(
+    oldValue: boolean,
+    newValue: boolean
+  ) {}
 
-    }
+  protected onTapToRetryEnabledChanged(oldValue: boolean, newValue: boolean) {}
 
+  protected onAspectRatioChanged(oldValue: number, newValue: number) {}
 
+  protected onDecodeWidthChanged(oldValue: number, newValue: number) {}
 
+  protected onDecodeHeightChanged(oldValue: number, newValue: number) {}
 }
-FrescoDrawee.imageUriProperty.register(FrescoDrawee);
-FrescoDrawee.placeholderImageUriProperty.register(FrescoDrawee);
-FrescoDrawee.failureImageUriProperty.register(FrescoDrawee);
-FrescoDrawee.actualImageScaleTypeProperty.register(FrescoDrawee);
-FrescoDrawee.fadeDurationProperty.register(FrescoDrawee);
-FrescoDrawee.backgroundUriProperty.register(FrescoDrawee);
-FrescoDrawee.progressiveRenderingEnabledProperty.register(FrescoDrawee);
-FrescoDrawee.showProgressBarProperty.register(FrescoDrawee);
-FrescoDrawee.progressBarColorProperty.register(FrescoDrawee);
-FrescoDrawee.roundAsCircleProperty.register(FrescoDrawee);
-FrescoDrawee.roundTopLeftProperty.register(FrescoDrawee);
-FrescoDrawee.roundTopRightProperty.register(FrescoDrawee);
-FrescoDrawee.roundBottomLeftProperty.register(FrescoDrawee);
-FrescoDrawee.roundBottomRightProperty.register(FrescoDrawee);
-FrescoDrawee.roundedCornerRadiusProperty.register(FrescoDrawee);
-FrescoDrawee.blurRadiusProperty.register(FrescoDrawee);
-FrescoDrawee.blurDownSamplingProperty.register(FrescoDrawee);
-FrescoDrawee.autoPlayAnimationsProperty.register(FrescoDrawee);
-FrescoDrawee.tapToRetryEnabledProperty.register(FrescoDrawee);
-FrescoDrawee.aspectRatioProperty.register(FrescoDrawee);
-FrescoDrawee.decodeWidthProperty.register(FrescoDrawee);
-FrescoDrawee.decodeHeightProperty.register(FrescoDrawee);
-FrescoDrawee.onlyTransitionIfRemoteProperty.register(FrescoDrawee);
+FrescoDraweeBase.imageUriProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.placeholderImageUriProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.failureImageUriProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.actualImageScaleTypeProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.fadeDurationProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.backgroundUriProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.progressiveRenderingEnabledProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.showProgressBarProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.progressBarColorProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundAsCircleProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundTopLeftProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundTopRightProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundBottomLeftProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundBottomRightProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.roundedCornerRadiusProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.blurRadiusProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.blurDownSamplingProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.autoPlayAnimationsProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.tapToRetryEnabledProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.aspectRatioProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.decodeWidthProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.decodeHeightProperty.register(FrescoDraweeBase);
+FrescoDraweeBase.onlyTransitionIfRemoteProperty.register(FrescoDraweeBase);

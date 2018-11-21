@@ -1,15 +1,15 @@
 import { View, Property, Color } from "tns-core-modules/ui/core/view";
 import * as observableModule from "tns-core-modules/data/observable";
-export declare type Transition = 'fade' | 'curlUp';
-export declare namespace ScaleType {
-    const Center = "center";
-    const CenterCrop = "centerCrop";
-    const CenterInside = "centerInside";
-    const FitCenter = "fitCenter";
-    const FitEnd = "fitEnd";
-    const FitStart = "fitStart";
-    const FitXY = "fitXY";
-    const FocusCrop = "focusCrop";
+export declare type Transition = "fade" | "curlUp";
+export declare enum ScaleType {
+    Center = "center",
+    CenterCrop = "centerCrop",
+    CenterInside = "centerInside",
+    FitCenter = "fitCenter",
+    FitEnd = "fitEnd",
+    FitStart = "fitStart",
+    FitXY = "fitXY",
+    FocusCrop = "focusCrop",
 }
 export interface AnimatedImage {
     start(): void;
@@ -34,8 +34,8 @@ export declare class EventData implements observableModule.EventData {
     eventName: string;
     object: any;
 }
-export declare type Stretch = 'none' | 'fill' | 'aspectFill' | 'aspectFit';
-export declare class FrescoDrawee extends View {
+export declare type Stretch = "none" | "fill" | "aspectFill" | "aspectFit";
+export declare class FrescoDraweeBase extends View {
     static finalImageSetEvent: string;
     static failureEvent: string;
     static intermediateImageFailedEvent: string;
@@ -45,7 +45,7 @@ export declare class FrescoDrawee extends View {
     imageUri: string;
     placeholderImageUri: string;
     failureImageUri: string;
-    actualImageScaleType: string;
+    actualImageScaleType: ScaleType;
     fadeDuration: number;
     backgroundUri: string;
     progressiveRenderingEnabled: boolean;
@@ -65,36 +65,36 @@ export declare class FrescoDrawee extends View {
     decodeWidth: number;
     decodeHeight: number;
     readonly isLoading: boolean;
-    static imageUriProperty: Property<FrescoDrawee, string>;
-    static placeholderImageUriProperty: Property<FrescoDrawee, string>;
-    static failureImageUriProperty: Property<FrescoDrawee, string>;
-    static actualImageScaleTypeProperty: Property<FrescoDrawee, string>;
-    static fadeDurationProperty: Property<FrescoDrawee, number>;
-    static backgroundUriProperty: Property<FrescoDrawee, string>;
-    static progressiveRenderingEnabledProperty: Property<FrescoDrawee, boolean>;
-    static showProgressBarProperty: Property<FrescoDrawee, boolean>;
-    static progressBarColorProperty: Property<FrescoDrawee, string>;
-    static roundAsCircleProperty: Property<FrescoDrawee, boolean>;
-    static roundTopLeftProperty: Property<FrescoDrawee, boolean>;
-    static roundTopRightProperty: Property<FrescoDrawee, boolean>;
-    static roundBottomLeftProperty: Property<FrescoDrawee, boolean>;
-    static roundBottomRightProperty: Property<FrescoDrawee, boolean>;
-    static roundedCornerRadiusProperty: Property<FrescoDrawee, number>;
-    static blurRadiusProperty: Property<FrescoDrawee, number>;
-    static blurDownSamplingProperty: Property<FrescoDrawee, number>;
-    static autoPlayAnimationsProperty: Property<FrescoDrawee, boolean>;
-    static tapToRetryEnabledProperty: Property<FrescoDrawee, boolean>;
-    static aspectRatioProperty: Property<FrescoDrawee, number>;
-    static decodeWidthProperty: Property<FrescoDrawee, number>;
-    static decodeHeightProperty: Property<FrescoDrawee, number>;
+    static imageUriProperty: Property<FrescoDraweeBase, string>;
+    static placeholderImageUriProperty: Property<FrescoDraweeBase, string>;
+    static failureImageUriProperty: Property<FrescoDraweeBase, string>;
+    static actualImageScaleTypeProperty: Property<FrescoDraweeBase, string>;
+    static fadeDurationProperty: Property<FrescoDraweeBase, number>;
+    static backgroundUriProperty: Property<FrescoDraweeBase, string>;
+    static progressiveRenderingEnabledProperty: Property<FrescoDraweeBase, boolean>;
+    static showProgressBarProperty: Property<FrescoDraweeBase, boolean>;
+    static progressBarColorProperty: Property<FrescoDraweeBase, string>;
+    static roundAsCircleProperty: Property<FrescoDraweeBase, boolean>;
+    static roundTopLeftProperty: Property<FrescoDraweeBase, boolean>;
+    static roundTopRightProperty: Property<FrescoDraweeBase, boolean>;
+    static roundBottomLeftProperty: Property<FrescoDraweeBase, boolean>;
+    static roundBottomRightProperty: Property<FrescoDraweeBase, boolean>;
+    static roundedCornerRadiusProperty: Property<FrescoDraweeBase, number>;
+    static blurRadiusProperty: Property<FrescoDraweeBase, number>;
+    static blurDownSamplingProperty: Property<FrescoDraweeBase, number>;
+    static autoPlayAnimationsProperty: Property<FrescoDraweeBase, boolean>;
+    static tapToRetryEnabledProperty: Property<FrescoDraweeBase, boolean>;
+    static aspectRatioProperty: Property<FrescoDraweeBase, number>;
+    static decodeWidthProperty: Property<FrescoDraweeBase, number>;
+    static decodeHeightProperty: Property<FrescoDraweeBase, number>;
     onlyTransitionIfRemote: boolean;
-    static onlyTransitionIfRemoteProperty: Property<FrescoDrawee, boolean>;
+    static onlyTransitionIfRemoteProperty: Property<FrescoDraweeBase, boolean>;
     tintColor: Color;
-    static tintColorProperty: Property<FrescoDrawee, Color>;
+    static tintColorProperty: Property<FrescoDraweeBase, Color>;
     transition: Transition;
-    static transitionProperty: Property<FrescoDrawee, Transition>;
+    static transitionProperty: Property<FrescoDraweeBase, Transition>;
     stretch: Stretch;
-    static stretchProperty: Property<FrescoDrawee, Stretch>;
+    static stretchProperty: Property<FrescoDraweeBase, Stretch>;
     private onImageUriPropertyChanged(oldValue, newValue);
     private onPlaceholderImageUriPropertyChanged(oldValue, newValue);
     private onFailureImageUriPropertyChanged(oldValue, newValue);

@@ -1,5 +1,5 @@
 export * from "./nativescript-fresco-common";
-import * as commonModule from "./nativescript-fresco-common";
+import {AnimatedImage, EventData, FrescoDraweeBase, FrescoError as FrescoErrorBase, ImageInfo as ImageInfoBase,  ImagePipelineConfigSetting, ScaleType, Stretch} from "./nativescript-fresco-common";
 import * as utils from "tns-core-modules/utils/utils";
 import * as types from "tns-core-modules/utils/types";
 import * as application from "tns-core-modules/application";
@@ -8,7 +8,7 @@ import * as fs from "tns-core-modules/file-system";
 import { Color } from "tns-core-modules/color/color";
 
 export function initialize(
-  config?: commonModule.ImagePipelineConfigSetting
+  config?: ImagePipelineConfigSetting
 ): void {
   if (application.android) {
     if (config && config.isDownsampleEnabled) {
@@ -91,7 +91,7 @@ export class ImagePipeline {
   }
 }
 
-export class FrescoError implements commonModule.FrescoError {
+export class FrescoError implements FrescoErrorBase {
   private _stringValue;
   private _message;
   private _errorType;
@@ -123,7 +123,7 @@ export interface QualityInfo {
   isOfGoodEnoughQuality();
 }
 
-export class ImageInfo implements commonModule.ImageInfo {
+export class ImageInfo implements ImageInfoBase {
   private _nativeImageInfo: com.facebook.imagepipeline.image.ImageInfo;
 
   constructor(imageInfo) {
@@ -143,9 +143,9 @@ export class ImageInfo implements commonModule.ImageInfo {
   }
 }
 
-export class FinalEventData extends commonModule.EventData {
+export class FinalEventData extends EventData {
   private _imageInfo: ImageInfo;
-  private _animatable: commonModule.AnimatedImage;
+  private _animatable: AnimatedImage;
 
   get imageInfo(): ImageInfo {
     return this._imageInfo;
@@ -155,16 +155,16 @@ export class FinalEventData extends commonModule.EventData {
     this._imageInfo = value;
   }
 
-  get animatable(): commonModule.AnimatedImage {
+  get animatable(): AnimatedImage {
     return this._animatable;
   }
 
-  set animatable(value: commonModule.AnimatedImage) {
+  set animatable(value: AnimatedImage) {
     this._animatable = value;
   }
 }
 
-export class IntermediateEventData extends commonModule.EventData {
+export class IntermediateEventData extends EventData {
   private _imageInfo: ImageInfo;
 
   get imageInfo(): ImageInfo {
@@ -176,7 +176,7 @@ export class IntermediateEventData extends commonModule.EventData {
   }
 }
 
-export class FailureEventData extends commonModule.EventData {
+export class FailureEventData extends EventData {
   private _error: FrescoError;
 
   get error(): FrescoError {
@@ -188,7 +188,7 @@ export class FailureEventData extends commonModule.EventData {
   }
 }
 
-export class FrescoDrawee extends commonModule.FrescoDrawee {
+export class FrescoDrawee extends FrescoDraweeBase {
   private _android: com.facebook.drawee.view.SimpleDraweeView;
 
   public createNativeView() {
@@ -382,17 +382,17 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
               let info = new ImageInfo(imageInfo);
 
               let args = <FinalEventData>{
-                eventName: commonModule.FrescoDrawee.finalImageSetEvent,
+                eventName: FrescoDraweeBase.finalImageSetEvent,
                 object: that.get(),
                 imageInfo: info,
-                animatable: <commonModule.AnimatedImage>animatable
+                animatable: <AnimatedImage>animatable
               };
 
               that.get().notify(args);
             } else {
               console.log(
                 "Warning: WeakRef<FrescoDrawee> was GC and no '" +
-                  commonModule.FrescoDrawee.finalImageSetEvent +
+                  FrescoDraweeBase.finalImageSetEvent +
                   "' callback will be raised."
               );
             }
@@ -401,7 +401,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             if (that && that.get()) {
               let frescoError = new FrescoError(throwable);
               let args: FailureEventData = <FailureEventData>{
-                eventName: commonModule.FrescoDrawee.failureEvent,
+                eventName: FrescoDraweeBase.failureEvent,
                 object: that.get(),
                 error: frescoError
               };
@@ -410,7 +410,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             } else {
               console.log(
                 "Warning: WeakRef<FrescoDrawee> was GC and no '" +
-                  commonModule.FrescoDrawee.failureEvent +
+                  FrescoDraweeBase.failureEvent +
                   "' callback will be raised."
               );
             }
@@ -420,7 +420,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
               let frescoError = new FrescoError(throwable);
               let args: FailureEventData = <FailureEventData>{
                 eventName:
-                  commonModule.FrescoDrawee.intermediateImageFailedEvent,
+                  FrescoDraweeBase.intermediateImageFailedEvent,
                 object: that.get(),
                 error: frescoError
               };
@@ -429,7 +429,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             } else {
               console.log(
                 "Warning: WeakRef<FrescoDrawee> was GC and no '" +
-                  commonModule.FrescoDrawee.intermediateImageFailedEvent +
+                  FrescoDraweeBase.intermediateImageFailedEvent +
                   "' callback will be raised."
               );
             }
@@ -438,7 +438,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             if (that && that.get()) {
               let info = new ImageInfo(imageInfo);
               let args: IntermediateEventData = <IntermediateEventData>{
-                eventName: commonModule.FrescoDrawee.intermediateImageSetEvent,
+                eventName: FrescoDraweeBase.intermediateImageSetEvent,
                 object: that.get(),
                 imageInfo: info
               };
@@ -447,15 +447,15 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             } else {
               console.log(
                 "Warning: WeakRef<FrescoDrawee> was GC and no '" +
-                  commonModule.FrescoDrawee.intermediateImageSetEvent +
+                  FrescoDraweeBase.intermediateImageSetEvent +
                   "' callback will be raised."
               );
             }
           },
           onRelease: function(id) {
             if (that && that.get()) {
-              let args: commonModule.EventData = <commonModule.EventData>{
-                eventName: commonModule.FrescoDrawee.releaseEvent,
+              let args: EventData = <EventData>{
+                eventName: FrescoDraweeBase.releaseEvent,
                 object: that.get()
               };
 
@@ -463,15 +463,15 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
             } else {
               console.log(
                 "Warning: WeakRef<FrescoDrawee> was GC and no '" +
-                  commonModule.FrescoDrawee.releaseEvent +
+                  FrescoDraweeBase.releaseEvent +
                   "' callback will be raised."
               );
             }
           },
           onSubmit: function(id, callerContext) {
             if (that && that.get()) {
-              let args: commonModule.EventData = <commonModule.EventData>{
-                eventName: commonModule.FrescoDrawee.submitEvent,
+              let args: EventData = <EventData>{
+                eventName: FrescoDraweeBase.submitEvent,
                 object: that.get()
               };
 
@@ -627,12 +627,12 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
 
     return drawable;
   }
-  [commonModule.FrescoDrawee.tintColorProperty.setNative](value: Color) {
+  [FrescoDraweeBase.tintColorProperty.setNative](value: Color) {
     console.log("test", "tintColorProperty", value);
     this.updateHierarchy();
   }
-  [commonModule.FrescoDrawee.stretchProperty.setNative](
-    value: commonModule.Stretch
+  [FrescoDraweeBase.stretchProperty.setNative](
+    value: Stretch
   ) {
     switch (value) {
       case "aspectFit":
@@ -788,22 +788,22 @@ class GenericDraweeHierarchyBuilder {
 function getScaleType(scaleType: string) {
   if (types.isString(scaleType)) {
     switch (scaleType) {
-      case commonModule.ScaleType.Center:
+      case ScaleType.Center:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.CENTER;
-      case commonModule.ScaleType.CenterCrop:
+      case ScaleType.CenterCrop:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.CENTER_CROP;
-      case commonModule.ScaleType.CenterInside:
+      case ScaleType.CenterInside:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType
           .CENTER_INSIDE;
-      case commonModule.ScaleType.FitCenter:
+      case ScaleType.FitCenter:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.FIT_CENTER;
-      case commonModule.ScaleType.FitEnd:
+      case ScaleType.FitEnd:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.FIT_END;
-      case commonModule.ScaleType.FitStart:
+      case ScaleType.FitStart:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.FIT_START;
-      case commonModule.ScaleType.FitXY:
+      case ScaleType.FitXY:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.FIT_XY;
-      case commonModule.ScaleType.FocusCrop:
+      case ScaleType.FocusCrop:
         return com.facebook.drawee.drawable.ScalingUtils.ScaleType.FOCUS_CROP;
       default:
         break;

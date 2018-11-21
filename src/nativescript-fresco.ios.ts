@@ -1,5 +1,10 @@
 export * from "./nativescript-fresco-common";
-import * as commonModule from "./nativescript-fresco-common";
+import {
+  FrescoDraweeBase,
+  ImagePipelineConfigSetting,
+  ScaleType,
+  Stretch
+} from "./nativescript-fresco-common";
 import * as utils from "tns-core-modules/utils/utils";
 import * as types from "tns-core-modules/utils/types";
 import * as application from "tns-core-modules/application";
@@ -7,7 +12,12 @@ import * as imageSource from "tns-core-modules/image-source";
 import * as fs from "tns-core-modules/file-system";
 import { Color } from "tns-core-modules/color/color";
 
-import { layout } from "tns-core-modules/ui/core/view";
+import {
+  layout,
+  traceEnabled,
+  traceWrite,
+  traceCategories
+} from "tns-core-modules/ui/core/view";
 
 const enum SDImageCacheType {
   SDImageCacheTypeNone,
@@ -18,28 +28,49 @@ const enum SDImageCacheType {
 function getScaleType(scaleType: string) {
   if (types.isString(scaleType)) {
     switch (scaleType) {
-      case commonModule.ScaleType.Center:
-      case commonModule.ScaleType.CenterCrop:
+      case ScaleType.Center:
+      case ScaleType.CenterCrop:
         return SDImageScaleMode.AspectFill;
-      case commonModule.ScaleType.CenterInside:
-      case commonModule.ScaleType.FitCenter:
-      case commonModule.ScaleType.FitEnd:
-      case commonModule.ScaleType.FitStart:
+      case ScaleType.CenterInside:
+      case ScaleType.FitCenter:
+      case ScaleType.FitEnd:
+      case ScaleType.FitStart:
         return SDImageScaleMode.AspectFit;
-      case commonModule.ScaleType.FitXY:
-      case commonModule.ScaleType.FocusCrop:
+      case ScaleType.FitXY:
+      case ScaleType.FocusCrop:
         return SDImageScaleMode.Fill;
       default:
         break;
     }
   }
-
   return null;
 }
 
-export function initialize(
-  config?: commonModule.ImagePipelineConfigSetting
-): void {}
+function getUIImageScaleType(scaleType: string) {
+  if (types.isString(scaleType)) {
+    switch (scaleType) {
+      case ScaleType.Center:
+        return UIViewContentMode.Center;
+      case ScaleType.FocusCrop:
+      case ScaleType.CenterCrop:
+        return UIViewContentMode.ScaleAspectFill;
+      case ScaleType.CenterInside:
+      case ScaleType.FitCenter:
+        return UIViewContentMode.ScaleAspectFit;
+      case ScaleType.FitEnd:
+        return UIViewContentMode.Right;
+      case ScaleType.FitStart:
+        return UIViewContentMode.Right;
+      case ScaleType.FitXY:
+        return UIViewContentMode.ScaleToFill;
+      default:
+        break;
+    }
+  }
+  return null;
+}
+
+export function initialize(config?: ImagePipelineConfigSetting): void {}
 
 export class ImagePipeline {
   private _ios: SDImageCache;
@@ -90,12 +121,13 @@ export function getImagePipeline(): ImagePipeline {
   return imagePineLine;
 }
 
-export class FrescoDrawee extends commonModule.FrescoDrawee {
+export class FrescoDrawee extends FrescoDraweeBase {
   nativeViewProtected: SDAnimatedImageView;
   isLoading = false;
   private _imageSourceAffectsLayout: boolean = true;
   public createNativeView() {
     const result = SDAnimatedImageView.new();
+    result.contentMode = UIViewContentMode.ScaleAspectFit;
     result.tintColor = null;
     return result;
   }
@@ -141,6 +173,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
       //     nativeHeight,
       //     this.stretch
       //   );
+
       const scale = FrescoDrawee.computeScaleFactor(
         width,
         height,
@@ -148,7 +181,8 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
         finiteHeight,
         nativeWidth,
         nativeHeight,
-        this.stretch
+        this.actualImageScaleType,
+        this.aspectRatio
       );
       const resultW = Math.round(nativeWidth * scale.width);
       const resultH = Math.round(nativeHeight * scale.height);
@@ -156,17 +190,17 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
       measureWidth = finiteWidth ? Math.min(resultW, width) : resultW;
       measureHeight = finiteHeight ? Math.min(resultH, height) : resultH;
 
-      //   if (traceEnabled()) {
-      //     traceWrite(
-      //       "Image stretch: " +
-      //         this.stretch +
-      //         ", nativeWidth: " +
-      //         nativeWidth +
-      //         ", nativeHeight: " +
-      //         nativeHeight,
-      //       traceCategories.Layout
-      //     );
-      //   }
+      // if (traceEnabled()) {
+      //   traceWrite(
+      //     "Image stretch: " +
+      //       this.stretch +
+      //       ", nativeWidth: " +
+      //       nativeWidth +
+      //       ", nativeHeight: " +
+      //       nativeHeight,
+      //     traceCategories.Layout
+      //   );
+      // }
     }
 
     const widthAndState = FrescoDrawee.resolveSizeAndState(
@@ -185,6 +219,22 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     this.setMeasuredDimension(widthAndState, heightAndState);
   }
 
+  private static needsSizeAdjustment(scaleType) {
+    if (scaleType === undefined) {
+      return true;
+    }
+    switch (scaleType) {
+      case ScaleType.FocusCrop:
+      case ScaleType.CenterCrop:
+      case ScaleType.CenterInside:
+      case ScaleType.FitCenter:
+      case ScaleType.FitXY:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   private static computeScaleFactor(
     measureWidth: number,
     measureHeight: number,
@@ -192,38 +242,57 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     heightIsFinite: boolean,
     nativeWidth: number,
     nativeHeight: number,
-    imageStretch: string
+    imageStretch: ScaleType,
+    aspectRatio?: number
   ): { width: number; height: number } {
     let scaleW = 1;
     let scaleH = 1;
-
     if (
-      (imageStretch === "aspectFill" ||
-        imageStretch === "aspectFit" ||
-        imageStretch === "fill") &&
+      FrescoDrawee.needsSizeAdjustment(imageStretch) &&
       (widthIsFinite || heightIsFinite)
     ) {
+      // if (aspectRatio !== undefined) {
+      //   if (!widthIsFinite) {
+      //     scaleH = 1;
+      //     scaleW = scaleH / aspectRatio;
+      //   } else if (!heightIsFinite) {
+      //     scaleW = 1;
+      //     scaleH = scaleW * aspectRatio;
+      //   }
+      // } else {
       scaleW = nativeWidth > 0 ? measureWidth / nativeWidth : 0;
       scaleH = nativeHeight > 0 ? measureHeight / nativeHeight : 0;
 
-      if (!widthIsFinite) {
-        scaleW = scaleH;
-      } else if (!heightIsFinite) {
-        scaleH = scaleW;
+      if (aspectRatio !== undefined) {
+        if (!widthIsFinite) {
+          scaleW = (nativeWidth / nativeHeight) * scaleW * aspectRatio;
+        } else if (!heightIsFinite) {
+          scaleH = ((nativeWidth / nativeHeight) * scaleW) / aspectRatio;
+        }
       } else {
-        // No infinite dimensions.
-        switch (imageStretch) {
-          case "aspectFit":
-            scaleH = scaleW < scaleH ? scaleW : scaleH;
-            scaleW = scaleH;
-            break;
-          case "aspectFill":
-            scaleH = scaleW > scaleH ? scaleW : scaleH;
-            scaleW = scaleH;
-            break;
+        if (!widthIsFinite) {
+          scaleW = scaleH;
+        } else if (!heightIsFinite) {
+          scaleH = scaleW;
+        } else {
+          // No infinite dimensions.
+          switch (imageStretch) {
+            case ScaleType.CenterInside:
+            case ScaleType.FitCenter:
+              scaleH = scaleW < scaleH ? scaleW : scaleH;
+              scaleW = scaleH;
+              break;
+            case ScaleType.FocusCrop:
+            case ScaleType.CenterCrop:
+              scaleH = scaleW > scaleH ? scaleW : scaleH;
+              scaleW = scaleH;
+              break;
+          }
         }
       }
+      // }
     }
+
     return { width: scaleW, height: scaleH };
   }
 
@@ -244,6 +313,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
   }
 
   protected onImageUriChanged(oldValue: string, newValue: string) {
+    console.log("onImageUriChanged", oldValue, newValue);
     this.initImage();
   }
 
@@ -259,29 +329,23 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     if (!this.nativeView) {
       return;
     }
-    switch (newValue) {
-      case "aspectFit":
-        this.nativeView.contentMode = UIViewContentMode.ScaleAspectFit;
-        break;
-      case "aspectFill":
-        this.nativeView.contentMode = UIViewContentMode.ScaleAspectFill;
-        break;
-      case "fill":
-        this.nativeView.contentMode = UIViewContentMode.ScaleToFill;
-        break;
-      case "none":
-      default:
-        this.nativeView.contentMode = UIViewContentMode.TopLeft;
-        break;
-    }
-  }
-
-  protected onAspectRatioChanged(oldValue: number, newValue: number) {
-    this.initImage();
+    this.nativeViewProtected.contentMode = getUIImageScaleType(newValue);
   }
 
   private initDrawee() {
     this.initImage();
+  }
+
+  public _setNativeImage(nativeImage: UIImage) {
+    this.nativeViewProtected.image = nativeImage;
+    // console.log(
+    //   "_setNativeImage",
+    //   !!nativeImage,
+    //   this._imageSourceAffectsLayout
+    // );
+    if (this._imageSourceAffectsLayout) {
+      this.requestLayout();
+    }
   }
 
   private handleImageLoaded = (
@@ -289,35 +353,34 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     error: NSError,
     cacheType: number
   ) => {
-    console.log(
-      "handleImageLoaded",
-      this.imageUri,
-      !!error,
-      !!image,
-      error ? error.localizedDescription : null
-    );
+    // console.log(
+    //   "handleImageLoaded",
+    //   this.imageUri,
+    //   !!error,
+    //   !!image,
+    //   error ? error.localizedDescription : null
+    // );
     if (error) {
       let args = {
-        eventName: commonModule.FrescoDrawee.failureEvent,
+        eventName: FrescoDrawee.failureEvent,
         object: this,
         error: error
       };
 
       this.notify(args);
       if (this.failureImageUri) {
-        this.nativeView.image = this.getUIImage(this.failureImageUri);
+        // console.log("setting failure image");
+        this._setNativeImage(this.getUIImage(this.failureImageUri));
       } else {
-        this.nativeView.image = null;
+        // console.log("clearing image");
+        this._setNativeImage(null);
+        this.nativeViewProtected.image = null;
       }
     }
 
     // if (this.tintColor) {
     //   image = image.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
     // }
-
-    if (this._imageSourceAffectsLayout) {
-      this.requestLayout();
-    }
     this.isLoading = false;
     if (
       !(
@@ -328,28 +391,32 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     ) {
       switch (this.transition) {
         case "fade":
-          this.nativeView.alpha = 0.0;
-          this.nativeView.image = image;
+          this.nativeViewProtected.alpha = 0.0;
+          this._setNativeImage(image);
           UIView.animateWithDurationAnimations(0.2, () => {
-            this.nativeView.alpha = this.opacity;
+            this.nativeViewProtected.alpha = this.opacity;
           });
           break;
         case "curlUp":
           UIView.transitionWithViewDurationOptionsAnimationsCompletion(
-            this.nativeView,
+            this.nativeViewProtected,
             0.3,
             UIViewAnimationOptions.TransitionCrossDissolve,
             () => {
-              this.nativeView.image = image;
+              this._setNativeImage(image);
             },
             null
           );
           break;
         default:
-          this.nativeView.image = image;
+          this._setNativeImage(image);
       }
     } else {
-      this.nativeView.image = image;
+      // console.log("setting image", !!image, !!image && image.size);
+      this._setNativeImage(image);
+    }
+    if (!this.autoPlayAnimations) {
+      this.nativeViewProtected.stopAnimating();
     }
     // if (image && cacheType !== SDImageCacheType.SDImageCacheTypeMemory)
     // {
@@ -382,6 +449,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
 
   private initImage() {
     if (this.nativeViewProtected) {
+      // this.nativeViewProtected.image = null;
       if (this.imageUri) {
         this.isLoading = true;
         let options =
@@ -446,7 +514,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
         // console.log("loading image", this.imageUri);
 
         if (transformers.length > 0) {
-        //   console.log("adding context transformers ", transformers.length);
+          //   console.log("adding context transformers ", transformers.length);
           context.setValueForKey(
             SDImagePipelineTransformer.transformerWithTransformers(
               transformers
@@ -457,20 +525,23 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
         let uri: any = this.imageUri;
 
         if (this.imageUri.indexOf(utils.RESOURCE_PREFIX) === 0) {
-            let resName = this.imageUri.substr(utils.RESOURCE_PREFIX.length);
-            uri = NSBundle.mainBundle.URLForResourceWithExtension(resName, 'png')
-            || NSBundle.mainBundle.URLForResourceWithExtension(resName, 'jpg')
-            || NSBundle.mainBundle.URLForResourceWithExtension(resName, 'gif');
-          }
+          let resName = this.imageUri.substr(utils.RESOURCE_PREFIX.length);
+          uri =
+            NSBundle.mainBundle.URLForResourceWithExtension(resName, "png") ||
+            NSBundle.mainBundle.URLForResourceWithExtension(resName, "jpg") ||
+            NSBundle.mainBundle.URLForResourceWithExtension(resName, "gif");
+        }
         if (this.imageUri.indexOf("~/") === 0) {
-          uri = NSURL.alloc().initFileURLWithPath(`${fs.path.join(
-            fs.knownFolders.currentApp().path,
-            this.imageUri.replace("~/", "")
-          )}`);
+          uri = NSURL.alloc().initFileURLWithPath(
+            `${fs.path.join(
+              fs.knownFolders.currentApp().path,
+              this.imageUri.replace("~/", "")
+            )}`
+          );
         }
         // console.log("about to load", this.imageUri, uri);
         this.nativeViewProtected.sd_setImageWithURLPlaceholderImageOptionsContextProgressCompleted(
-            uri as any,
+          uri as any,
           this.placeholderImageUri
             ? this.getUIImage(this.placeholderImageUri)
             : null,
@@ -482,9 +553,7 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
       }
     }
   }
-  [commonModule.FrescoDrawee.stretchProperty.setNative](
-    value: commonModule.Stretch
-  ) {
+  [FrescoDraweeBase.stretchProperty.setNative](value: Stretch) {
     switch (value) {
       case "aspectFit":
         this.nativeView.contentMode = UIViewContentMode.ScaleAspectFit;

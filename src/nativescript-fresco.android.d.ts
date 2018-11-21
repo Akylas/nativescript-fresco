@@ -1,6 +1,6 @@
 export * from "./nativescript-fresco-common";
-import * as commonModule from "./nativescript-fresco-common";
-export declare function initialize(config?: commonModule.ImagePipelineConfigSetting): void;
+import { AnimatedImage, EventData, FrescoDraweeBase, FrescoError as FrescoErrorBase, ImageInfo as ImageInfoBase, ImagePipelineConfigSetting } from "./nativescript-fresco-common";
+export declare function initialize(config?: ImagePipelineConfigSetting): void;
 export declare function getImagePipeline(): ImagePipeline;
 export declare function shutDown(): void;
 export declare class ImagePipeline {
@@ -15,7 +15,7 @@ export declare class ImagePipeline {
     clearDiskCaches(): void;
     android: any;
 }
-export declare class FrescoError implements commonModule.FrescoError {
+export declare class FrescoError implements FrescoErrorBase {
     private _stringValue;
     private _message;
     private _errorType;
@@ -29,30 +29,30 @@ export interface QualityInfo {
     isOfFullQuality(): any;
     isOfGoodEnoughQuality(): any;
 }
-export declare class ImageInfo implements commonModule.ImageInfo {
+export declare class ImageInfo implements ImageInfoBase {
     private _nativeImageInfo;
     constructor(imageInfo: any);
     getHeight(): number;
     getWidth(): number;
     getQualityInfo(): QualityInfo;
 }
-export declare class FinalEventData extends commonModule.EventData {
+export declare class FinalEventData extends EventData {
     private _imageInfo;
     private _animatable;
     imageInfo: ImageInfo;
-    animatable: commonModule.AnimatedImage;
+    animatable: AnimatedImage;
 }
-export declare class IntermediateEventData extends commonModule.EventData {
+export declare class IntermediateEventData extends EventData {
     private _imageInfo;
     imageInfo: ImageInfo;
 }
-export declare class FailureEventData extends commonModule.EventData {
+export declare class FailureEventData extends EventData {
     private _error;
     error: FrescoError;
 }
-export declare class FrescoDrawee extends commonModule.FrescoDrawee {
+export declare class FrescoDrawee extends FrescoDraweeBase {
     private _android;
-    createNativeView(): com.facebook.drawee.view.SimpleDraweeView;
+    createNativeView(): any;
     initNativeView(): void;
     disposeNativeView(): void;
     updateImageUri(): void;
