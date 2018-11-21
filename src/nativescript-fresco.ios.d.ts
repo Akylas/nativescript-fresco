@@ -16,10 +16,10 @@ export declare class ImagePipeline {
 }
 export declare function getImagePipeline(): ImagePipeline;
 export declare class FrescoDrawee extends commonModule.FrescoDrawee {
-    nativeViewProtected: FLAnimatedImageView;
+    nativeViewProtected: SDAnimatedImageView;
     isLoading: boolean;
     private _imageSourceAffectsLayout;
-    createNativeView(): FLAnimatedImageView;
+    createNativeView(): SDAnimatedImageView;
     initNativeView(): void;
     onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void;
     private static computeScaleFactor(measureWidth, measureHeight, widthIsFinite, heightIsFinite, nativeWidth, nativeHeight, imageStretch);

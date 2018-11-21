@@ -7,6 +7,9 @@
     "id": "org.nativescript.demo",
     "tns-android": {
       "version": "5.0.0"
+    },
+    "tns-ios": {
+      "version": "5.0.1-rc-2018-11-15-163743-01"
     }
   },
   "dependencies": {
@@ -19,7 +22,8 @@
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-dev-webpack": "~0.18.0",
     "tns-platform-declarations": "^5.0.0",
-    "tslint": "~5.11.0"
+    "tslint": "~5.11.0",
+    "typescript": "^3.1.6"
   },
   "scripts": {
     "build.plugin": "cd ../src && npm run build",

@@ -3,6 +3,7 @@
         <fresco:FrescoDrawee xmlns:fresco="nativescript-fresco"  
                         height="200" width="400"
                         placeholderImageUri="res://ns_logo"            
+                        backgroundColor="blue"
                         failureImageUri="res://ns_logo_black"
                         aspectRatio="1.49"
                         showProgressBar="true"

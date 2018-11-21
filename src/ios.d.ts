@@ -1,391 +1,1769 @@
-declare class FLAnimatedImage extends NSObject {
-  static alloc(): FLAnimatedImage; // inherited from NSObject
 
-  static animatedImageWithGIFData(data: NSData): FLAnimatedImage;
+declare class SDAnimatedImage extends UIImage implements SDAnimatedImageProtocol {
 
-  static logStringFromBlockWithLevel(
-    stringBlock: () => string,
-    level: FLLogLevel
-  ): void;
+	static alloc(): SDAnimatedImage; // inherited from NSObject
 
-  static new(): FLAnimatedImage; // inherited from NSObject
+	static new(): SDAnimatedImage; // inherited from NSObject
 
-  static setLogBlockLogLevel(
-    logBlock: (p1: string, p2: FLLogLevel) => void,
-    logLevel: FLLogLevel
-  ): void;
+	static objectWithItemProviderDataTypeIdentifierError(data: NSData, typeIdentifier: string): SDAnimatedImage; // inherited from NSItemProviderReading
 
-  static sizeForImage(image: any): CGSize;
+	readonly animatedImageFormat: number;
 
-  readonly data: NSData;
+	readonly allFramesLoaded: boolean; // inherited from SDAnimatedImageProtocol
 
-  readonly delayTimesForIndexes: NSDictionary<any, any>;
+	readonly animatedImageData: NSData; // inherited from SDAnimatedImageProvider
 
-  readonly frameCacheSizeCurrent: number;
+	readonly animatedImageFrameCount: number; // inherited from SDAnimatedImageProvider
 
-  frameCacheSizeMax: number;
+	readonly animatedImageLoopCount: number; // inherited from SDAnimatedImageProvider
 
-  readonly frameCount: number;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  readonly loopCount: number;
+	readonly description: string; // inherited from NSObjectProtocol
 
-  readonly posterImage: UIImage;
+	readonly hash: number; // inherited from NSObjectProtocol
 
-  readonly size: CGSize;
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-  constructor(o: { animatedGIFData: NSData });
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-  constructor(o: {
-    animatedGIFData: NSData;
-    optimalFrameCacheSize: number;
-    predrawingEnabled: boolean;
-  });
+	readonly  // inherited from NSObjectProtocol
 
-  imageLazilyCachedAtIndex(index: number): UIImage;
+	constructor(o: { animatedCoder: SDAnimatedImageCoder; scale: number; }); // inherited from SDAnimatedImageProtocol
 
-  initWithAnimatedGIFData(data: NSData): this;
+	constructor(o: { data: NSData; scale: number; options: NSDictionary<string, any>; }); // inherited from SDAnimatedImageProtocol
 
-  initWithAnimatedGIFDataOptimalFrameCacheSizePredrawingEnabled(
-    data: NSData,
-    optimalFrameCacheSize: number,
-    isPredrawingEnabled: boolean
-  ): this;
+	animatedImageDurationAtIndex(index: number): number;
+
+	animatedImageFrameAtIndex(index: number): UIImage;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	initWithAnimatedCoderScale(animatedCoder: SDAnimatedImageCoder, scale: number): this;
+
+	initWithDataScaleOptions(data: NSData, scale: number, options: NSDictionary<string, any>): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	preloadAllFrames(): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	unloadAllFrames(): void;
 }
 
-declare var FLAnimatedImageVersionNumber: number;
+interface SDAnimatedImageCoder extends SDAnimatedImageProvider, SDImageCoder {
 
-declare var FLAnimatedImageVersionString: interop.Reference<number>;
+	initWithAnimatedImageDataOptions?(data: NSData, options: NSDictionary<string, any>): SDAnimatedImageCoder;
+}
+declare var SDAnimatedImageCoder: {
 
-declare class FLAnimatedImageView extends UIImageView {
-  static alloc(): FLAnimatedImageView; // inherited from NSObject
+	prototype: SDAnimatedImageCoder;
+};
 
-  static appearance(): FLAnimatedImageView; // inherited from UIAppearance
+interface SDAnimatedImageProtocol extends SDAnimatedImageProvider {
 
-  static appearanceForTraitCollection(
-    trait: UITraitCollection
-  ): FLAnimatedImageView; // inherited from UIAppearance
+	allFramesLoaded?: boolean;
 
-  static appearanceForTraitCollectionWhenContainedIn(
-    trait: UITraitCollection,
-    ContainerClass: typeof NSObject
-  ): FLAnimatedImageView; // inherited from UIAppearance
+	initWithAnimatedCoderScale?(animatedCoder: SDAnimatedImageCoder, scale: number): SDAnimatedImageProtocol;
 
-  static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(
-    trait: UITraitCollection,
-    containerTypes: NSArray<typeof NSObject> | typeof NSObject[]
-  ): FLAnimatedImageView; // inherited from UIAppearance
+	initWithDataScaleOptions?(data: NSData, scale: number, options: NSDictionary<string, any>): SDAnimatedImageProtocol;
 
-  static appearanceWhenContainedIn(
-    ContainerClass: typeof NSObject
-  ): FLAnimatedImageView; // inherited from UIAppearance
+	preloadAllFrames?(): void;
 
-  static appearanceWhenContainedInInstancesOfClasses(
-    containerTypes: NSArray<typeof NSObject> | typeof NSObject[]
-  ): FLAnimatedImageView; // inherited from UIAppearance
+	unloadAllFrames?(): void;
+}
+declare var SDAnimatedImageProtocol: {
 
-  static new(): FLAnimatedImageView; // inherited from NSObject
+	prototype: SDAnimatedImageProtocol;
+};
 
-  animatedImage: FLAnimatedImage;
+interface SDAnimatedImageProvider extends NSObjectProtocol {
 
-  readonly currentFrame: UIImage;
+	animatedImageData: NSData;
 
-  readonly currentFrameIndex: number;
+	animatedImageFrameCount: number;
 
-  loopCompletionBlock: (p1: number) => void;
+	animatedImageLoopCount: number;
 
-  runLoopMode: string;
+	animatedImageDurationAtIndex(index: number): number;
 
-  sd_cacheFLAnimatedImage: boolean;
+	animatedImageFrameAtIndex(index: number): UIImage;
+}
+declare var SDAnimatedImageProvider: {
 
-  sd_optimalFrameCacheSize: number;
+	prototype: SDAnimatedImageProvider;
+};
 
-  sd_predrawingEnabled: boolean;
+declare class SDAnimatedImageView extends UIImageView {
+
+	static alloc(): SDAnimatedImageView; // inherited from NSObject
+
+	static appearance(): SDAnimatedImageView; // inherited from UIAppearance
+
+	static appearanceForTraitCollection(trait: UITraitCollection): SDAnimatedImageView; // inherited from UIAppearance
+
+	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): SDAnimatedImageView; // inherited from UIAppearance
+
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): SDAnimatedImageView; // inherited from UIAppearance
+
+	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): SDAnimatedImageView; // inherited from UIAppearance
+
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): SDAnimatedImageView; // inherited from UIAppearance
+
+	static new(): SDAnimatedImageView; // inherited from NSObject
+
+	readonly currentFrame: UIImage;
+
+	readonly currentFrameIndex: number;
+
+	readonly currentLoopCount: number;
+
+	maxBufferSize: number;
+
+	runLoopMode: string;
+
+	shouldCustomLoopCount: boolean;
+
+	shouldIncrementalLoad: boolean;
 }
 
-declare const enum FLLogLevel {
-  None = 0,
+declare class SDDiskCache extends NSObject implements SDDiskCacheProtocol {
 
-  Error = 1,
+	static alloc(): SDDiskCache; // inherited from NSObject
 
-  Warn = 2,
+	static new(): SDDiskCache; // inherited from NSObject
 
-  Info = 3,
+	readonly config: SDImageCacheConfig;
 
-  Debug = 4,
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  Verbose = 5
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { cachePath: string; config: SDImageCacheConfig; }); // inherited from SDDiskCacheProtocol
+
+	cachePathForKey(key: string): string;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	containsDataForKey(key: string): boolean;
+
+	dataForKey(key: string): NSData;
+
+	initWithCachePathConfig(cachePath: string, config: SDImageCacheConfig): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	moveCacheDirectoryFromPathToPath(srcPath: string, dstPath: string): void;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	removeAllData(): void;
+
+	removeDataForKey(key: string): void;
+
+	removeExpiredData(): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	setDataForKey(data: NSData, key: string): void;
+
+	totalCount(): number;
+
+	totalSize(): number;
 }
 
-declare class FLWeakProxy extends NSProxy {
-  static alloc(): FLWeakProxy; // inherited from NSProxy
+interface SDDiskCacheProtocol extends NSObjectProtocol {
 
-  static weakProxyForObject(targetObject: any): FLWeakProxy;
+	cachePathForKey(key: string): string;
+
+	containsDataForKey(key: string): boolean;
+
+	dataForKey(key: string): NSData;
+
+	initWithCachePathConfig?(cachePath: string, config: SDImageCacheConfig): SDDiskCacheProtocol;
+
+	removeAllData(): void;
+
+	removeDataForKey(key: string): void;
+
+	removeExpiredData(): void;
+
+	setDataForKey(data: NSData, key: string): void;
+
+	totalCount(): number;
+
+	totalSize(): number;
+}
+declare var SDDiskCacheProtocol: {
+
+	prototype: SDDiskCacheProtocol;
+};
+
+declare class SDImageAPNGCoder extends NSObject implements SDAnimatedImageCoder, SDProgressiveImageCoder {
+
+	static alloc(): SDImageAPNGCoder; // inherited from NSObject
+
+	static new(): SDImageAPNGCoder; // inherited from NSObject
+
+	static readonly sharedCoder: SDImageAPNGCoder;
+
+	readonly animatedImageData: NSData; // inherited from SDAnimatedImageProvider
+
+	readonly animatedImageFrameCount: number; // inherited from SDAnimatedImageProvider
+
+	readonly animatedImageLoopCount: number; // inherited from SDAnimatedImageProvider
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { incrementalWithOptions: NSDictionary<string, any>; }); // inherited from SDProgressiveImageCoder
+
+	constructor(o: { animatedImageData: NSData; options: NSDictionary<string, any>; }); // inherited from SDAnimatedImageCoder
+
+	animatedImageDurationAtIndex(index: number): number;
+
+	animatedImageFrameAtIndex(index: number): UIImage;
+
+	canDecodeFromData(data: NSData): boolean;
+
+	canEncodeToFormat(format: number): boolean;
+
+	canIncrementalDecodeFromData(data: NSData): boolean;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	decodedImageWithDataOptions(data: NSData, options: NSDictionary<string, any>): UIImage;
+
+	encodedDataWithImageFormatOptions(image: UIImage, format: number, options: NSDictionary<string, any>): NSData;
+
+	incrementalDecodedImageWithOptions(options: NSDictionary<string, any>): UIImage;
+
+	initIncrementalWithOptions(options: NSDictionary<string, any>): this;
+
+	initWithAnimatedImageDataOptions(data: NSData, options: NSDictionary<string, any>): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	updateIncrementalDataFinished(data: NSData, finished: boolean): void;
 }
 
-declare var kFLAnimatedImageDelayTimeIntervalMinimum: number;
+declare class SDImageBlurTransformer extends NSObject implements SDImageTransformer {
 
-declare function SDCGColorSpaceGetDeviceRGB(): interop.Unmanaged<any>;
+	static alloc(): SDImageBlurTransformer; // inherited from NSObject
 
-declare function SDCGImageRefContainsAlpha(imageRef: any): boolean;
+	static new(): SDImageBlurTransformer; // inherited from NSObject
 
-declare class SDImageCache extends NSObject {
-  static alloc(): SDImageCache; // inherited from NSObject
+	static transformerWithRadius(blurRadius: number): SDImageBlurTransformer;
 
-  static new(): SDImageCache; // inherited from NSObject
+	readonly blurRadius: number;
 
-  static sharedImageCache(): SDImageCache;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  readonly config: SDImageCacheConfig;
+	readonly description: string; // inherited from NSObjectProtocol
 
-  maxMemoryCost: number;
+	readonly hash: number; // inherited from NSObjectProtocol
 
-  maxMemoryCountLimit: number;
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-  constructor(o: { namespace: string });
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-  constructor(o: { namespace: string; diskCacheDirectory: string });
+	readonly transformerKey: string; // inherited from SDImageTransformer
 
-  addReadOnlyCachePath(path: string): void;
+	readonly  // inherited from NSObjectProtocol
 
-  cachePathForKeyInPath(key: string, path: string): string;
+	class(): typeof NSObject;
 
-  calculateSizeWithCompletionBlock(
-    completionBlock: (p1: number, p2: number) => void
-  ): void;
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-  clearDiskOnCompletion(completion: () => void): void;
+	isEqual(object: any): boolean;
 
-  clearMemory(): void;
+	isKindOfClass(aClass: typeof NSObject): boolean;
 
-  defaultCachePathForKey(key: string): string;
+	isMemberOfClass(aClass: typeof NSObject): boolean;
 
-  deleteOldFilesWithCompletionBlock(completionBlock: () => void): void;
+	performSelector(aSelector: string): any;
 
-  diskImageDataExistsWithKey(key: string): boolean;
+	performSelectorWithObject(aSelector: string, object: any): any;
 
-  diskImageExistsWithKeyCompletion(
-    key: string,
-    completionBlock: (p1: boolean) => void
-  ): void;
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
 
-  getDiskCount(): number;
+	respondsToSelector(aSelector: string): boolean;
 
-  getSize(): number;
+	retainCount(): number;
 
-  imageFromCacheForKey(key: string): UIImage;
+	self(): this;
 
-  imageFromDiskCacheForKey(key: string): UIImage;
-
-  imageFromMemoryCacheForKey(key: string): UIImage;
-
-  initWithNamespace(ns: string): this;
-
-  initWithNamespaceDiskCacheDirectory(ns: string, directory: string): this;
-
-  makeDiskCachePath(fullNamespace: string): string;
-
-  queryCacheOperationForKeyDone(
-    key: string,
-    doneBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void
-  ): NSOperation;
-
-  queryCacheOperationForKeyOptionsDone(
-    key: string,
-    options: SDImageCacheOptions,
-    doneBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void
-  ): NSOperation;
-
-  removeImageForKeyFromDiskWithCompletion(
-    key: string,
-    fromDisk: boolean,
-    completion: () => void
-  ): void;
-
-  removeImageForKeyWithCompletion(key: string, completion: () => void): void;
-
-  storeImageDataToDiskForKey(imageData: NSData, key: string): void;
-
-  storeImageForKeyCompletion(
-    image: UIImage,
-    key: string,
-    completionBlock: () => void
-  ): void;
-
-  storeImageForKeyToDiskCompletion(
-    image: UIImage,
-    key: string,
-    toDisk: boolean,
-    completionBlock: () => void
-  ): void;
-
-  storeImageImageDataForKeyToDiskCompletion(
-    image: UIImage,
-    imageData: NSData,
-    key: string,
-    toDisk: boolean,
-    completionBlock: () => void
-  ): void;
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
 }
 
-declare class SDImageCacheConfig extends NSObject {
-  static alloc(): SDImageCacheConfig; // inherited from NSObject
+declare class SDImageCache extends NSObject implements SDImageCacheProtocol {
 
-  static new(): SDImageCacheConfig; // inherited from NSObject
+	static alloc(): SDImageCache; // inherited from NSObject
 
-  diskCacheReadingOptions: NSDataReadingOptions;
+	static new(): SDImageCache; // inherited from NSObject
 
-  diskCacheWritingOptions: NSDataWritingOptions;
+	additionalCachePathBlock: (p1: string) => string;
 
-  maxCacheAge: number;
+	readonly config: SDImageCacheConfig;
 
-  maxCacheSize: number;
+	readonly diskCachePath: string;
 
-  shouldCacheImagesInMemory: boolean;
+	static readonly sharedImageCache: SDImageCache;
 
-  shouldDecompressImages: boolean;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  shouldDisableiCloud: boolean;
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { namespace: string; });
+
+	constructor(o: { namespace: string; diskCacheDirectory: string; });
+
+	constructor(o: { namespace: string; diskCacheDirectory: string; config: SDImageCacheConfig; });
+
+	cachePathForKey(key: string): string;
+
+	calculateSizeWithCompletionBlock(completionBlock: (p1: number, p2: number) => void): void;
+
+	class(): typeof NSObject;
+
+	clearDiskOnCompletion(completion: () => void): void;
+
+	clearMemory(): void;
+
+	clearWithCacheTypeCompletion(cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	containsImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: (p1: SDImageCacheType) => void): void;
+
+	deleteOldFilesWithCompletionBlock(completionBlock: () => void): void;
+
+	diskImageDataExistsWithKey(key: string): boolean;
+
+	diskImageDataForKey(key: string): NSData;
+
+	diskImageExistsWithKeyCompletion(key: string, completionBlock: (p1: boolean) => void): void;
+
+	getDiskCount(): number;
+
+	getSize(): number;
+
+	imageFromCacheForKey(key: string): UIImage;
+
+	imageFromDiskCacheForKey(key: string): UIImage;
+
+	imageFromMemoryCacheForKey(key: string): UIImage;
+
+	initWithNamespace(ns: string): this;
+
+	initWithNamespaceDiskCacheDirectory(ns: string, directory: string): this;
+
+	initWithNamespaceDiskCacheDirectoryConfig(ns: string, directory: string, config: SDImageCacheConfig): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	queryCacheOperationForKeyDone(key: string, doneBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): NSOperation;
+
+	queryCacheOperationForKeyOptionsContextDone(key: string, options: SDImageCacheOptions, context: NSDictionary<string, any>, doneBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): NSOperation;
+
+	queryCacheOperationForKeyOptionsDone(key: string, options: SDImageCacheOptions, doneBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): NSOperation;
+
+	queryImageForKeyOptionsContextCompletion(key: string, options: SDWebImageOptions, context: NSDictionary<string, any>, completionBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): SDWebImageOperation;
+
+	removeImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	removeImageForKeyFromDiskWithCompletion(key: string, fromDisk: boolean, completion: () => void): void;
+
+	removeImageForKeyWithCompletion(key: string, completion: () => void): void;
+
+	removeImageFromDiskForKey(key: string): void;
+
+	removeImageFromMemoryForKey(key: string): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	storeImageDataToDiskForKey(imageData: NSData, key: string): void;
+
+	storeImageForKeyCompletion(image: UIImage, key: string, completionBlock: () => void): void;
+
+	storeImageForKeyToDiskCompletion(image: UIImage, key: string, toDisk: boolean, completionBlock: () => void): void;
+
+	storeImageImageDataForKeyCacheTypeCompletion(image: UIImage, imageData: NSData, key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	storeImageImageDataForKeyToDiskCompletion(image: UIImage, imageData: NSData, key: string, toDisk: boolean, completionBlock: () => void): void;
+
+	storeImageToMemoryForKey(image: UIImage, key: string): void;
 }
+
+declare class SDImageCacheConfig extends NSObject implements NSCopying {
+
+	static alloc(): SDImageCacheConfig; // inherited from NSObject
+
+	static new(): SDImageCacheConfig; // inherited from NSObject
+
+	diskCacheClass: typeof NSObject;
+
+	diskCacheExpireType: SDImageCacheConfigExpireType;
+
+	diskCacheReadingOptions: NSDataReadingOptions;
+
+	diskCacheWritingOptions: NSDataWritingOptions;
+
+	fileManager: NSFileManager;
+
+	maxCacheAge: number;
+
+	maxCacheSize: number;
+
+	maxMemoryCost: number;
+
+	maxMemoryCount: number;
+
+	memoryCacheClass: typeof NSObject;
+
+	namespacePrefix: string;
+
+	shouldCacheImagesInMemory: boolean;
+
+	shouldDisableiCloud: boolean;
+
+	shouldRemoveExpiredDataWhenEnterBackground: boolean;
+
+	shouldUseWeakMemoryCache: boolean;
+
+	static readonly defaultCacheConfig: SDImageCacheConfig;
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+}
+
+declare const enum SDImageCacheConfigExpireType {
+
+	AccessDate = 0,
+
+	ModificationDate = 1
+}
+
+declare function SDImageCacheDecodeImageData(imageData: NSData, cacheKey: string, options: SDWebImageOptions, context: NSDictionary<string, any>): UIImage;
 
 declare const enum SDImageCacheOptions {
-  QueryDataWhenInMemory = 1,
 
-  QueryDiskSync = 2
+	QueryMemoryData = 1,
+
+	QueryMemoryDataSync = 2,
+
+	QueryDiskDataSync = 4,
+
+	ScaleDownLargeImages = 8,
+
+	AvoidDecodeImage = 16,
+
+	DecodeFirstFrameOnly = 32,
+
+	PreloadAllFrames = 64
 }
+
+interface SDImageCacheProtocol extends NSObjectProtocol {
+
+	clearWithCacheTypeCompletion(cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	containsImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: (p1: SDImageCacheType) => void): void;
+
+	queryImageForKeyOptionsContextCompletion(key: string, options: SDWebImageOptions, context: NSDictionary<string, any>, completionBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): SDWebImageOperation;
+
+	removeImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	storeImageImageDataForKeyCacheTypeCompletion(image: UIImage, imageData: NSData, key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
+}
+declare var SDImageCacheProtocol: {
+
+	prototype: SDImageCacheProtocol;
+};
 
 declare const enum SDImageCacheType {
-  None = 0,
 
-  Disk = 1,
+	None = 0,
 
-  Memory = 2
+	Disk = 1,
+
+	Memory = 2,
+
+	All = 3
 }
 
-declare const enum SDImageFormat {
-  Undefined = -1,
+declare class SDImageCachesManager extends NSObject implements SDImageCacheProtocol {
 
-  JPEG = 0,
+	static alloc(): SDImageCachesManager; // inherited from NSObject
 
-  PNG = 1,
+	static new(): SDImageCachesManager; // inherited from NSObject
 
-  GIF = 2,
+	caches: NSArray<SDImageCacheProtocol>;
 
-  TIFF = 3,
+	clearOperationPolicy: SDImageCachesManagerOperationPolicy;
 
-  WebP = 4,
+	containsOperationPolicy: SDImageCachesManagerOperationPolicy;
 
-  HEIC = 5
+	queryOperationPolicy: SDImageCachesManagerOperationPolicy;
+
+	removeOperationPolicy: SDImageCachesManagerOperationPolicy;
+
+	storeOperationPolicy: SDImageCachesManagerOperationPolicy;
+
+	static readonly sharedManager: SDImageCachesManager;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	addCache(cache: SDImageCacheProtocol): void;
+
+	class(): typeof NSObject;
+
+	clearWithCacheTypeCompletion(cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	containsImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: (p1: SDImageCacheType) => void): void;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	queryImageForKeyOptionsContextCompletion(key: string, options: SDWebImageOptions, context: NSDictionary<string, any>, completionBlock: (p1: UIImage, p2: NSData, p3: SDImageCacheType) => void): SDWebImageOperation;
+
+	removeCache(cache: SDImageCacheProtocol): void;
+
+	removeImageForKeyCacheTypeCompletion(key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	storeImageImageDataForKeyCacheTypeCompletion(image: UIImage, imageData: NSData, key: string, cacheType: SDImageCacheType, completionBlock: () => void): void;
 }
+
+declare const enum SDImageCachesManagerOperationPolicy {
+
+	Serial = 0,
+
+	Concurrent = 1,
+
+	HighestOnly = 2,
+
+	LowestOnly = 3
+}
+
+interface SDImageCoder extends NSObjectProtocol {
+
+	canDecodeFromData(data: NSData): boolean;
+
+	canEncodeToFormat(format: number): boolean;
+
+	decodedImageWithDataOptions(data: NSData, options: NSDictionary<string, any>): UIImage;
+
+	encodedDataWithImageFormatOptions(image: UIImage, format: number, options: NSDictionary<string, any>): NSData;
+}
+declare var SDImageCoder: {
+
+	prototype: SDImageCoder;
+};
+
+declare var SDImageCoderDecodeFirstFrameOnly: string;
+
+declare var SDImageCoderDecodeScaleFactor: string;
+
+declare var SDImageCoderEncodeCompressionQuality: string;
+
+declare var SDImageCoderEncodeFirstFrameOnly: string;
+
+declare class SDImageCoderHelper extends NSObject {
+
+	static CGImageContainsAlpha(cgImage: any): boolean;
+
+	static CGImageCreateDecoded(cgImage: any): any;
+
+	static CGImageCreateDecodedOrientation(cgImage: any, orientation: CGImagePropertyOrientation): any;
+
+	static alloc(): SDImageCoderHelper; // inherited from NSObject
+
+	static animatedImageWithFrames(frames: NSArray<SDImageFrame> | SDImageFrame[]): UIImage;
+
+	static colorSpaceGetDeviceRGB(): any;
+
+	static decodedAndScaledDownImageWithImageLimitBytes(image: UIImage, bytes: number): UIImage;
+
+	static decodedImageWithImage(image: UIImage): UIImage;
+
+	static exifOrientationFromImageOrientation(imageOrientation: UIImageOrientation): CGImagePropertyOrientation;
+
+	static framesFromAnimatedImage(animatedImage: UIImage): NSArray<SDImageFrame>;
+
+	static imageOrientationFromEXIFOrientation(exifOrientation: CGImagePropertyOrientation): UIImageOrientation;
+
+	static new(): SDImageCoderHelper; // inherited from NSObject
+}
+
+declare var SDImageCoderWebImageContext: string;
+
+declare class SDImageCodersManager extends NSObject implements SDImageCoder {
+
+	static alloc(): SDImageCodersManager; // inherited from NSObject
+
+	static new(): SDImageCodersManager; // inherited from NSObject
+
+	coders: NSArray<SDImageCoder>;
+
+	static readonly sharedManager: SDImageCodersManager;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	addCoder(coder: SDImageCoder): void;
+
+	canDecodeFromData(data: NSData): boolean;
+
+	canEncodeToFormat(format: number): boolean;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	decodedImageWithDataOptions(data: NSData, options: NSDictionary<string, any>): UIImage;
+
+	encodedDataWithImageFormatOptions(image: UIImage, format: number, options: NSDictionary<string, any>): NSData;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	removeCoder(coder: SDImageCoder): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+}
+
+declare class SDImageCroppingTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageCroppingTransformer; // inherited from NSObject
+
+	static new(): SDImageCroppingTransformer; // inherited from NSObject
+
+	static transformerWithRect(rect: CGRect): SDImageCroppingTransformer;
+
+	readonly rect: CGRect;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare class SDImageFilterTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageFilterTransformer; // inherited from NSObject
+
+	static new(): SDImageFilterTransformer; // inherited from NSObject
+
+	static transformerWithFilter(filter: CIFilter): SDImageFilterTransformer;
+
+	readonly filter: CIFilter;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare class SDImageFlippingTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageFlippingTransformer; // inherited from NSObject
+
+	static new(): SDImageFlippingTransformer; // inherited from NSObject
+
+	static transformerWithHorizontalVertical(horizontal: boolean, vertical: boolean): SDImageFlippingTransformer;
+
+	readonly horizontal: boolean;
+
+	readonly vertical: boolean;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare var SDImageFormatGIF: number;
+
+declare var SDImageFormatHEIC: number;
+
+declare var SDImageFormatHEIF: number;
+
+declare var SDImageFormatJPEG: number;
+
+declare var SDImageFormatPNG: number;
+
+declare var SDImageFormatTIFF: number;
+
+declare var SDImageFormatUndefined: number;
+
+declare var SDImageFormatWebP: number;
+
+declare class SDImageFrame extends NSObject {
+
+	static alloc(): SDImageFrame; // inherited from NSObject
+
+	static frameWithImageDuration(image: UIImage, duration: number): SDImageFrame;
+
+	static new(): SDImageFrame; // inherited from NSObject
+
+	readonly duration: number;
+
+	readonly image: UIImage;
+}
+
+declare class SDImageGIFCoder extends NSObject implements SDAnimatedImageCoder, SDProgressiveImageCoder {
+
+	static alloc(): SDImageGIFCoder; // inherited from NSObject
+
+	static new(): SDImageGIFCoder; // inherited from NSObject
+
+	static readonly sharedCoder: SDImageGIFCoder;
+
+	readonly animatedImageData: NSData; // inherited from SDAnimatedImageProvider
+
+	readonly animatedImageFrameCount: number; // inherited from SDAnimatedImageProvider
+
+	readonly animatedImageLoopCount: number; // inherited from SDAnimatedImageProvider
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { incrementalWithOptions: NSDictionary<string, any>; }); // inherited from SDProgressiveImageCoder
+
+	constructor(o: { animatedImageData: NSData; options: NSDictionary<string, any>; }); // inherited from SDAnimatedImageCoder
+
+	animatedImageDurationAtIndex(index: number): number;
+
+	animatedImageFrameAtIndex(index: number): UIImage;
+
+	canDecodeFromData(data: NSData): boolean;
+
+	canEncodeToFormat(format: number): boolean;
+
+	canIncrementalDecodeFromData(data: NSData): boolean;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	decodedImageWithDataOptions(data: NSData, options: NSDictionary<string, any>): UIImage;
+
+	encodedDataWithImageFormatOptions(image: UIImage, format: number, options: NSDictionary<string, any>): NSData;
+
+	incrementalDecodedImageWithOptions(options: NSDictionary<string, any>): UIImage;
+
+	initIncrementalWithOptions(options: NSDictionary<string, any>): this;
+
+	initWithAnimatedImageDataOptions(data: NSData, options: NSDictionary<string, any>): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	updateIncrementalDataFinished(data: NSData, finished: boolean): void;
+}
+
+declare class SDImageIOCoder extends NSObject implements SDProgressiveImageCoder {
+
+	static alloc(): SDImageIOCoder; // inherited from NSObject
+
+	static new(): SDImageIOCoder; // inherited from NSObject
+
+	static readonly sharedCoder: SDImageIOCoder;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { incrementalWithOptions: NSDictionary<string, any>; }); // inherited from SDProgressiveImageCoder
+
+	canDecodeFromData(data: NSData): boolean;
+
+	canEncodeToFormat(format: number): boolean;
+
+	canIncrementalDecodeFromData(data: NSData): boolean;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	decodedImageWithDataOptions(data: NSData, options: NSDictionary<string, any>): UIImage;
+
+	encodedDataWithImageFormatOptions(image: UIImage, format: number, options: NSDictionary<string, any>): NSData;
+
+	incrementalDecodedImageWithOptions(options: NSDictionary<string, any>): UIImage;
+
+	initIncrementalWithOptions(options: NSDictionary<string, any>): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	updateIncrementalDataFinished(data: NSData, finished: boolean): void;
+}
+
+interface SDImageLoader extends NSObjectProtocol {
+
+	canLoadWithURL(url: NSURL): boolean;
+
+	loadImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): SDWebImageOperation;
+}
+declare var SDImageLoader: {
+
+	prototype: SDImageLoader;
+};
+
+declare function SDImageLoaderDecodeImageData(imageData: NSData, imageURL: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>): UIImage;
+
+declare function SDImageLoaderDecodeProgressiveImageData(imageData: NSData, imageURL: NSURL, finished: boolean, operation: SDWebImageOperation, options: SDWebImageOptions, context: NSDictionary<string, any>): UIImage;
+
+declare class SDImageLoadersManager extends NSObject implements SDImageLoader {
+
+	static alloc(): SDImageLoadersManager; // inherited from NSObject
+
+	static new(): SDImageLoadersManager; // inherited from NSObject
+
+	loaders: NSArray<SDImageLoader>;
+
+	static readonly sharedManager: SDImageLoadersManager;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	addLoader(loader: SDImageLoader): void;
+
+	canLoadWithURL(url: NSURL): boolean;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	loadImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): SDWebImageOperation;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	removeLoader(loader: SDImageLoader): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+}
+
+declare class SDImagePipelineTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImagePipelineTransformer; // inherited from NSObject
+
+	static new(): SDImagePipelineTransformer; // inherited from NSObject
+
+	static transformerWithTransformers(transformers: NSArray<SDImageTransformer> | SDImageTransformer[]): SDImagePipelineTransformer;
+
+	readonly transformers: NSArray<SDImageTransformer>;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare class SDImageResizingTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageResizingTransformer; // inherited from NSObject
+
+	static new(): SDImageResizingTransformer; // inherited from NSObject
+
+	static transformerWithSizeScaleMode(size: CGSize, scaleMode: SDImageScaleMode): SDImageResizingTransformer;
+
+	readonly scaleMode: SDImageScaleMode;
+
+	readonly size: CGSize;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare class SDImageRotationTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageRotationTransformer; // inherited from NSObject
+
+	static new(): SDImageRotationTransformer; // inherited from NSObject
+
+	static transformerWithAngleFitSize(angle: number, fitSize: boolean): SDImageRotationTransformer;
+
+	readonly angle: number;
+
+	readonly fitSize: boolean;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare class SDImageRoundCornerTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageRoundCornerTransformer; // inherited from NSObject
+
+	static new(): SDImageRoundCornerTransformer; // inherited from NSObject
+
+	static transformerWithRadiusCornersBorderWidthBorderColor(cornerRadius: number, corners: UIRectCorner, borderWidth: number, borderColor: UIColor): SDImageRoundCornerTransformer;
+
+	readonly borderColor: UIColor;
+
+	readonly borderWidth: number;
+
+	readonly cornerRadius: number;
+
+	readonly corners: UIRectCorner;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+declare function SDImageScaleFactorForKey(key: string): number;
+
+declare const enum SDImageScaleMode {
+
+	Fill = 0,
+
+	AspectFit = 1,
+
+	AspectFill = 2
+}
+
+declare class SDImageTintTransformer extends NSObject implements SDImageTransformer {
+
+	static alloc(): SDImageTintTransformer; // inherited from NSObject
+
+	static new(): SDImageTintTransformer; // inherited from NSObject
+
+	static transformerWithColor(tintColor: UIColor): SDImageTintTransformer;
+
+	readonly tintColor: UIColor;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly transformerKey: string; // inherited from SDImageTransformer
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+
+interface SDImageTransformer extends NSObjectProtocol {
+
+	transformerKey: string;
+
+	transformedImageWithImageForKey(image: UIImage, key: string): UIImage;
+}
+declare var SDImageTransformer: {
+
+	prototype: SDImageTransformer;
+};
+
+declare class SDMemoryCache<KeyType, ObjectType> extends NSCache<KeyType, ObjectType> implements SDMemoryCacheProtocol {
+
+	static alloc<KeyType, ObjectType>(): SDMemoryCache<KeyType, ObjectType>; // inherited from NSObject
+
+	static new<KeyType, ObjectType>(): SDMemoryCache<KeyType, ObjectType>; // inherited from NSObject
+
+	readonly config: SDImageCacheConfig;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { config: SDImageCacheConfig; }); // inherited from SDMemoryCacheProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	initWithConfig(config: SDImageCacheConfig): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	objectForKey(key: any): any;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	removeAllObjects(): void;
+
+	removeObjectForKey(key: any): void;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	setObjectForKey(object: any, key: any): void;
+
+	setObjectForKeyCost(object: any, key: any, cost: number): void;
+}
+
+declare function SDMemoryCacheCostForImage(image: UIImage): number;
+
+interface SDMemoryCacheProtocol extends NSObjectProtocol {
+
+	initWithConfig?(config: SDImageCacheConfig): SDMemoryCacheProtocol;
+
+	objectForKey(key: any): any;
+
+	removeAllObjects(): void;
+
+	removeObjectForKey(key: any): void;
+
+	setObjectForKey(object: any, key: any): void;
+
+	setObjectForKeyCost(object: any, key: any, cost: number): void;
+}
+declare var SDMemoryCacheProtocol: {
+
+	prototype: SDMemoryCacheProtocol;
+};
+
+interface SDProgressiveImageCoder extends SDImageCoder {
+
+	canIncrementalDecodeFromData(data: NSData): boolean;
+
+	incrementalDecodedImageWithOptions(options: NSDictionary<string, any>): UIImage;
+
+	initIncrementalWithOptions?(options: NSDictionary<string, any>): SDProgressiveImageCoder;
+
+	updateIncrementalDataFinished(data: NSData, finished: boolean): void;
+}
+declare var SDProgressiveImageCoder: {
+
+	prototype: SDProgressiveImageCoder;
+};
 
 declare function SDScaledImageForKey(key: string, image: UIImage): UIImage;
 
-interface SDWebImageCoder extends NSObjectProtocol {
-  canDecodeFromData(data: NSData): boolean;
+declare function SDScaledImageForScaleFactor(scale: number, image: UIImage): UIImage;
 
-  canEncodeToFormat(format: SDImageFormat): boolean;
+declare function SDTransformedKeyForKey(key: string, transformerKey: string): string;
 
-  decodedImageWithData(data: NSData): UIImage;
+declare class SDWebImageActivityIndicator extends NSObject implements SDWebImageIndicator {
 
-  decompressedImageWithImageDataOptions(
-    image: UIImage,
-    data: interop.Pointer | interop.Reference<NSData>,
-    optionsDict: NSDictionary<string, NSObject>
-  ): UIImage;
+	static alloc(): SDWebImageActivityIndicator; // inherited from NSObject
 
-  encodedDataWithImageFormat(image: UIImage, format: SDImageFormat): NSData;
+	static new(): SDWebImageActivityIndicator; // inherited from NSObject
+
+	readonly indicatorView: UIActivityIndicatorView;
+
+	static readonly grayIndicator: SDWebImageActivityIndicator;
+
+	static readonly grayLargeIndicator: SDWebImageActivityIndicator;
+
+	static readonly whiteIndicator: SDWebImageActivityIndicator;
+
+	static readonly whiteLargeIndicator: SDWebImageActivityIndicator;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	startAnimatingIndicator(): void;
+
+	stopAnimatingIndicator(): void;
+
+	updateIndicatorProgress(progress: number): void;
 }
-declare var SDWebImageCoder: {
-  prototype: SDWebImageCoder;
+
+declare class SDWebImageCacheKeyFilter extends NSObject implements SDWebImageCacheKeyFilterProtocol {
+
+	static alloc(): SDWebImageCacheKeyFilter; // inherited from NSObject
+
+	static cacheKeyFilterWithBlock(block: (p1: NSURL) => string): SDWebImageCacheKeyFilter;
+
+	static new(): SDWebImageCacheKeyFilter; // inherited from NSObject
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { block: (p1: NSURL) => string; });
+
+	cacheKeyForURL(url: NSURL): string;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	initWithBlock(block: (p1: NSURL) => string): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+}
+
+interface SDWebImageCacheKeyFilterProtocol extends NSObjectProtocol {
+
+	cacheKeyForURL(url: NSURL): string;
+}
+declare var SDWebImageCacheKeyFilterProtocol: {
+
+	prototype: SDWebImageCacheKeyFilterProtocol;
 };
 
-declare class SDWebImageCoderHelper extends NSObject {
-  static alloc(): SDWebImageCoderHelper; // inherited from NSObject
+declare class SDWebImageCacheSerializer extends NSObject implements SDWebImageCacheSerializerProtocol {
 
-  static animatedImageWithFrames(frames: NSArray<SDWebImageFrame>): UIImage;
+	static alloc(): SDWebImageCacheSerializer; // inherited from NSObject
 
-  static exifOrientationFromImageOrientation(
-    imageOrientation: UIImageOrientation
-  ): number;
+	static cacheSerializerWithBlock(block: (p1: UIImage, p2: NSData, p3: NSURL) => NSData): SDWebImageCacheSerializer;
 
-  static framesFromAnimatedImage(
-    animatedImage: UIImage
-  ): NSArray<SDWebImageFrame>;
+	static new(): SDWebImageCacheSerializer; // inherited from NSObject
 
-  static imageOrientationFromEXIFOrientation(
-    exifOrientation: number
-  ): UIImageOrientation;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  static new(): SDWebImageCoderHelper; // inherited from NSObject
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { block: (p1: UIImage, p2: NSData, p3: NSURL) => NSData; });
+
+	cacheDataWithImageOriginalDataImageURL(image: UIImage, data: NSData, imageURL: NSURL): NSData;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	initWithBlock(block: (p1: UIImage, p2: NSData, p3: NSURL) => NSData): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
 }
 
-declare var SDWebImageCoderScaleDownLargeImagesKey: string;
+interface SDWebImageCacheSerializerProtocol extends NSObjectProtocol {
 
-declare class SDWebImageCodersManager extends NSObject
-  implements SDWebImageCoder {
-  static alloc(): SDWebImageCodersManager; // inherited from NSObject
-
-  static new(): SDWebImageCodersManager; // inherited from NSObject
-
-  static sharedInstance(): SDWebImageCodersManager;
-
-  coders: NSArray<any>;
-
-  readonly debugDescription: string; // inherited from NSObjectProtocol
-
-  readonly description: string; // inherited from NSObjectProtocol
-
-  readonly hash: number; // inherited from NSObjectProtocol
-
-  readonly isProxy: boolean; // inherited from NSObjectProtocol
-
-  readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
-
-  readonly; // inherited from NSObjectProtocol
-
-  addCoder(coder: SDWebImageCoder): void;
-
-  canDecodeFromData(data: NSData): boolean;
-
-  canEncodeToFormat(format: SDImageFormat): boolean;
-
-  class(): typeof NSObject;
-
-  conformsToProtocol(aProtocol: any /* Protocol */): boolean;
-
-  decodedImageWithData(data: NSData): UIImage;
-
-  decompressedImageWithImageDataOptions(
-    image: UIImage,
-    data: interop.Pointer | interop.Reference<NSData>,
-    optionsDict: NSDictionary<string, NSObject>
-  ): UIImage;
-
-  encodedDataWithImageFormat(image: UIImage, format: SDImageFormat): NSData;
-
-  isEqual(object: any): boolean;
-
-  isKindOfClass(aClass: typeof NSObject): boolean;
-
-  isMemberOfClass(aClass: typeof NSObject): boolean;
-
-  performSelector(aSelector: string): any;
-
-  performSelectorWithObject(aSelector: string, object: any): any;
-
-  performSelectorWithObjectWithObject(
-    aSelector: string,
-    object1: any,
-    object2: any
-  ): any;
-
-  removeCoder(coder: SDWebImageCoder): void;
-
-  respondsToSelector(aSelector: string): boolean;
-
-  retainCount(): number;
-
-  self(): this;
+	cacheDataWithImageOriginalDataImageURL(image: UIImage, data: NSData, imageURL: NSURL): NSData;
 }
+declare var SDWebImageCacheSerializerProtocol: {
+
+	prototype: SDWebImageCacheSerializerProtocol;
+};
+
+declare class SDWebImageCombinedOperation extends NSObject implements SDWebImageOperation {
+
+	static alloc(): SDWebImageCombinedOperation; // inherited from NSObject
+
+	static new(): SDWebImageCombinedOperation; // inherited from NSObject
+
+	readonly cacheOperation: SDWebImageOperation;
+
+	readonly loaderOperation: SDWebImageOperation;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	cancel(): void;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+}
+
+declare var SDWebImageContextAnimatedImageClass: string;
+
+declare var SDWebImageContextCacheKeyFilter: string;
+
+declare var SDWebImageContextCacheSerializer: string;
+
+declare var SDWebImageContextCustomManager: string;
+
+declare var SDWebImageContextDownloadRequestModifier: string;
+
+declare var SDWebImageContextImageScaleFactor: string;
+
+declare var SDWebImageContextImageTransformer: string;
+
+declare var SDWebImageContextLoaderCachedImage: string;
+
+declare var SDWebImageContextSetImageOperationKey: string;
+
+declare var SDWebImageContextStoreCacheType: string;
 
 declare var SDWebImageDownloadFinishNotification: string;
 
@@ -399,740 +1777,719 @@ declare var SDWebImageDownloadStopNotification: string;
 
 declare var SDWebImageDownloadStopNotificationVar: string;
 
-declare class SDWebImageDownloadToken extends NSObject
-  implements SDWebImageOperation {
-  static alloc(): SDWebImageDownloadToken; // inherited from NSObject
+declare class SDWebImageDownloadToken extends NSObject implements SDWebImageOperation {
 
-  static new(): SDWebImageDownloadToken; // inherited from NSObject
+	static alloc(): SDWebImageDownloadToken; // inherited from NSObject
 
-  downloadOperationCancelToken: any;
+	static new(): SDWebImageDownloadToken; // inherited from NSObject
 
-  url: NSURL;
+	readonly request: NSURLRequest;
 
-  readonly debugDescription: string; // inherited from NSObjectProtocol
+	readonly response: NSURLResponse;
 
-  readonly description: string; // inherited from NSObjectProtocol
+	readonly url: NSURL;
 
-  readonly hash: number; // inherited from NSObjectProtocol
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  readonly isProxy: boolean; // inherited from NSObjectProtocol
+	readonly description: string; // inherited from NSObjectProtocol
 
-  readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+	readonly hash: number; // inherited from NSObjectProtocol
 
-  readonly; // inherited from NSObjectProtocol
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-  cancel(): void;
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-  class(): typeof NSObject;
+	readonly  // inherited from NSObjectProtocol
 
-  conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+	cancel(): void;
 
-  isEqual(object: any): boolean;
+	class(): typeof NSObject;
 
-  isKindOfClass(aClass: typeof NSObject): boolean;
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-  isMemberOfClass(aClass: typeof NSObject): boolean;
+	isEqual(object: any): boolean;
 
-  performSelector(aSelector: string): any;
+	isKindOfClass(aClass: typeof NSObject): boolean;
 
-  performSelectorWithObject(aSelector: string, object: any): any;
+	isMemberOfClass(aClass: typeof NSObject): boolean;
 
-  performSelectorWithObjectWithObject(
-    aSelector: string,
-    object1: any,
-    object2: any
-  ): any;
+	performSelector(aSelector: string): any;
 
-  respondsToSelector(aSelector: string): boolean;
+	performSelectorWithObject(aSelector: string, object: any): any;
 
-  retainCount(): number;
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
 
-  self(): this;
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
 }
 
-declare class SDWebImageDownloader extends NSObject {
-  static alloc(): SDWebImageDownloader; // inherited from NSObject
+declare class SDWebImageDownloader extends NSObject implements SDImageLoader {
 
-  static new(): SDWebImageDownloader; // inherited from NSObject
+	static alloc(): SDWebImageDownloader; // inherited from NSObject
 
-  static sharedDownloader(): SDWebImageDownloader;
+	static new(): SDWebImageDownloader; // inherited from NSObject
 
-  readonly currentDownloadCount: number;
+	readonly config: SDWebImageDownloaderConfig;
 
-  downloadTimeout: number;
+	readonly currentDownloadCount: number;
 
-  executionOrder: SDWebImageDownloaderExecutionOrder;
+	requestModifier: SDWebImageDownloaderRequestModifierProtocol;
 
-  headersFilter: (
-    p1: NSURL,
-    p2: NSDictionary<string, string>
-  ) => NSDictionary<string, string>;
+	readonly sessionConfiguration: NSURLSessionConfiguration;
 
-  maxConcurrentDownloads: number;
+	suspended: boolean;
 
-  password: string;
+	static readonly sharedDownloader: SDWebImageDownloader;
 
-  readonly sessionConfiguration: NSURLSessionConfiguration;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  shouldDecompressImages: boolean;
+	readonly description: string; // inherited from NSObjectProtocol
 
-  urlCredential: NSURLCredential;
+	readonly hash: number; // inherited from NSObjectProtocol
 
-  username: string;
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-  constructor(o: { sessionConfiguration: NSURLSessionConfiguration });
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-  cancel(token: SDWebImageDownloadToken): void;
+	readonly  // inherited from NSObjectProtocol
 
-  cancelAllDownloads(): void;
+	constructor(o: { config: SDWebImageDownloaderConfig; });
 
-  createNewSessionWithConfiguration(
-    sessionConfiguration: NSURLSessionConfiguration
-  ): void;
+	canLoadWithURL(url: NSURL): boolean;
 
-  downloadImageWithURLOptionsProgressCompleted(
-    url: NSURL,
-    options: SDWebImageDownloaderOptions,
-    progressBlock: (p1: number, p2: number, p3: NSURL) => void,
-    completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void
-  ): SDWebImageDownloadToken;
+	cancelAllDownloads(): void;
 
-  initWithSessionConfiguration(
-    sessionConfiguration: NSURLSessionConfiguration
-  ): this;
+	class(): typeof NSObject;
 
-  invalidateSessionAndCancel(cancelPendingOperations: boolean): void;
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-  setOperationClass(operationClass: typeof NSObject): void;
+	downloadImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageDownloaderOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): SDWebImageDownloadToken;
 
-  setSuspended(suspended: boolean): void;
+	downloadImageWithURLOptionsProgressCompleted(url: NSURL, options: SDWebImageDownloaderOptions, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): SDWebImageDownloadToken;
 
-  setValueForHTTPHeaderField(value: string, field: string): void;
+	initWithConfig(config: SDWebImageDownloaderConfig): this;
 
-  valueForHTTPHeaderField(field: string): string;
+	invalidateSessionAndCancel(cancelPendingOperations: boolean): void;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	loadImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): SDWebImageOperation;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	setValueForHTTPHeaderField(value: string, field: string): void;
+
+	valueForHTTPHeaderField(field: string): string;
+}
+
+declare class SDWebImageDownloaderConfig extends NSObject implements NSCopying {
+
+	static alloc(): SDWebImageDownloaderConfig; // inherited from NSObject
+
+	static new(): SDWebImageDownloaderConfig; // inherited from NSObject
+
+	downloadTimeout: number;
+
+	executionOrder: SDWebImageDownloaderExecutionOrder;
+
+	maxConcurrentDownloads: number;
+
+	minimumProgressInterval: number;
+
+	operationClass: typeof NSObject;
+
+	password: string;
+
+	sessionConfiguration: NSURLSessionConfiguration;
+
+	urlCredential: NSURLCredential;
+
+	username: string;
+
+	static readonly defaultDownloaderConfig: SDWebImageDownloaderConfig;
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 }
 
 declare const enum SDWebImageDownloaderExecutionOrder {
-  FIFOExecutionOrder = 0,
 
-  LIFOExecutionOrder = 1
+	FIFOExecutionOrder = 0,
+
+	LIFOExecutionOrder = 1
 }
 
-declare class SDWebImageDownloaderOperation extends NSOperation
-  implements
-    NSURLSessionDataDelegate,
-    NSURLSessionTaskDelegate,
-    SDWebImageDownloaderOperationInterface,
-    SDWebImageOperation {
-  static alloc(): SDWebImageDownloaderOperation; // inherited from NSObject
+declare class SDWebImageDownloaderOperation extends NSOperation implements SDWebImageDownloaderOperationProtocol {
 
-  static new(): SDWebImageDownloaderOperation; // inherited from NSObject
+	static alloc(): SDWebImageDownloaderOperation; // inherited from NSObject
 
-  credential: NSURLCredential;
+	static new(): SDWebImageDownloaderOperation; // inherited from NSObject
 
-  readonly dataTask: NSURLSessionTask;
+	readonly context: NSDictionary<string, any>;
 
-  expectedSize: number;
+	readonly options: SDWebImageDownloaderOptions;
 
-  readonly options: SDWebImageDownloaderOptions;
+	credential: NSURLCredential; // inherited from SDWebImageDownloaderOperationProtocol
 
-  readonly request: NSURLRequest;
+	readonly dataTask: NSURLSessionTask; // inherited from SDWebImageDownloaderOperationProtocol
 
-  response: NSURLResponse;
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-  shouldDecompressImages: boolean;
+	readonly description: string; // inherited from NSObjectProtocol
 
-  shouldUseCredentialStorage: boolean;
+	readonly hash: number; // inherited from NSObjectProtocol
 
-  readonly debugDescription: string; // inherited from NSObjectProtocol
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-  readonly description: string; // inherited from NSObjectProtocol
+	minimumProgressInterval: number; // inherited from SDWebImageDownloaderOperationProtocol
 
-  readonly hash: number; // inherited from NSObjectProtocol
+	readonly request: NSURLRequest; // inherited from SDWebImageDownloaderOperationProtocol
 
-  readonly isProxy: boolean; // inherited from NSObjectProtocol
+	readonly response: NSURLResponse; // inherited from SDWebImageDownloaderOperationProtocol
 
-  readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-  readonly; // inherited from NSObjectProtocol
+	readonly  // inherited from NSObjectProtocol
 
-  constructor(o: {
-    request: NSURLRequest;
-    inSession: NSURLSession;
-    options: SDWebImageDownloaderOptions;
-  }); // inherited from SDWebImageDownloaderOperationInterface
+	constructor(o: { request: NSURLRequest; inSession: NSURLSession; options: SDWebImageDownloaderOptions; }); // inherited from SDWebImageDownloaderOperationProtocol
 
-  URLSessionDataTaskDidBecomeDownloadTask(
-    session: NSURLSession,
-    dataTask: NSURLSessionDataTask,
-    downloadTask: NSURLSessionDownloadTask
-  ): void;
+	constructor(o: { request: NSURLRequest; inSession: NSURLSession; options: SDWebImageDownloaderOptions; context: NSDictionary<string, any>; }); // inherited from SDWebImageDownloaderOperationProtocol
 
-  URLSessionDataTaskDidBecomeStreamTask(
-    session: NSURLSession,
-    dataTask: NSURLSessionDataTask,
-    streamTask: NSURLSessionStreamTask
-  ): void;
+	URLSessionDataTaskDidBecomeDownloadTask(session: NSURLSession, dataTask: NSURLSessionDataTask, downloadTask: NSURLSessionDownloadTask): void;
 
-  URLSessionDataTaskDidReceiveData(
-    session: NSURLSession,
-    dataTask: NSURLSessionDataTask,
-    data: NSData
-  ): void;
+	URLSessionDataTaskDidBecomeStreamTask(session: NSURLSession, dataTask: NSURLSessionDataTask, streamTask: NSURLSessionStreamTask): void;
 
-  URLSessionDataTaskDidReceiveResponseCompletionHandler(
-    session: NSURLSession,
-    dataTask: NSURLSessionDataTask,
-    response: NSURLResponse,
-    completionHandler: (p1: NSURLSessionResponseDisposition) => void
-  ): void;
+	URLSessionDataTaskDidReceiveData(session: NSURLSession, dataTask: NSURLSessionDataTask, data: NSData): void;
 
-  URLSessionDataTaskWillCacheResponseCompletionHandler(
-    session: NSURLSession,
-    dataTask: NSURLSessionDataTask,
-    proposedResponse: NSCachedURLResponse,
-    completionHandler: (p1: NSCachedURLResponse) => void
-  ): void;
+	URLSessionDataTaskDidReceiveResponseCompletionHandler(session: NSURLSession, dataTask: NSURLSessionDataTask, response: NSURLResponse, completionHandler: (p1: NSURLSessionResponseDisposition) => void): void;
 
-  URLSessionDidBecomeInvalidWithError(
-    session: NSURLSession,
-    error: NSError
-  ): void;
+	URLSessionDataTaskWillCacheResponseCompletionHandler(session: NSURLSession, dataTask: NSURLSessionDataTask, proposedResponse: NSCachedURLResponse, completionHandler: (p1: NSCachedURLResponse) => void): void;
 
-  URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession): void;
+	URLSessionDidBecomeInvalidWithError(session: NSURLSession, error: NSError): void;
 
-  URLSessionDidReceiveChallengeCompletionHandler(
-    session: NSURLSession,
-    challenge: NSURLAuthenticationChallenge,
-    completionHandler: (
-      p1: NSURLSessionAuthChallengeDisposition,
-      p2: NSURLCredential
-    ) => void
-  ): void;
+	URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession): void;
 
-  URLSessionTaskDidCompleteWithError(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    error: NSError
-  ): void;
+	URLSessionDidReceiveChallengeCompletionHandler(session: NSURLSession, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void): void;
 
-  URLSessionTaskDidFinishCollectingMetrics(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    metrics: NSURLSessionTaskMetrics
-  ): void;
+	URLSessionTaskDidCompleteWithError(session: NSURLSession, task: NSURLSessionTask, error: NSError): void;
 
-  URLSessionTaskDidReceiveChallengeCompletionHandler(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    challenge: NSURLAuthenticationChallenge,
-    completionHandler: (
-      p1: NSURLSessionAuthChallengeDisposition,
-      p2: NSURLCredential
-    ) => void
-  ): void;
+	URLSessionTaskDidFinishCollectingMetrics(session: NSURLSession, task: NSURLSessionTask, metrics: NSURLSessionTaskMetrics): void;
 
-  URLSessionTaskDidSendBodyDataTotalBytesSentTotalBytesExpectedToSend(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    bytesSent: number,
-    totalBytesSent: number,
-    totalBytesExpectedToSend: number
-  ): void;
+	URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void): void;
 
-  URLSessionTaskIsWaitingForConnectivity(
-    session: NSURLSession,
-    task: NSURLSessionTask
-  ): void;
+	URLSessionTaskDidSendBodyDataTotalBytesSentTotalBytesExpectedToSend(session: NSURLSession, task: NSURLSessionTask, bytesSent: number, totalBytesSent: number, totalBytesExpectedToSend: number): void;
 
-  URLSessionTaskNeedNewBodyStream(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    completionHandler: (p1: NSInputStream) => void
-  ): void;
+	URLSessionTaskIsWaitingForConnectivity(session: NSURLSession, task: NSURLSessionTask): void;
 
-  URLSessionTaskWillBeginDelayedRequestCompletionHandler(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    request: NSURLRequest,
-    completionHandler: (
-      p1: NSURLSessionDelayedRequestDisposition,
-      p2: NSURLRequest
-    ) => void
-  ): void;
+	URLSessionTaskNeedNewBodyStream(session: NSURLSession, task: NSURLSessionTask, completionHandler: (p1: NSInputStream) => void): void;
 
-  URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(
-    session: NSURLSession,
-    task: NSURLSessionTask,
-    response: NSHTTPURLResponse,
-    request: NSURLRequest,
-    completionHandler: (p1: NSURLRequest) => void
-  ): void;
+	URLSessionTaskWillBeginDelayedRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, request: NSURLRequest, completionHandler: (p1: NSURLSessionDelayedRequestDisposition, p2: NSURLRequest) => void): void;
 
-  addHandlersForProgressCompleted(
-    progressBlock: (p1: number, p2: number, p3: NSURL) => void,
-    completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void
-  ): any;
+	URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: (p1: NSURLRequest) => void): void;
 
-  cancel(token: any): boolean;
-  cancel();
+	addHandlersForProgressCompleted(progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): any;
 
-  class(): typeof NSObject;
+	cancel(token?: any): boolean;
 
-  conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+	class(): typeof NSObject;
 
-  initWithRequestInSessionOptions(
-    request: NSURLRequest,
-    session: NSURLSession,
-    options: SDWebImageDownloaderOptions
-  ): this;
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-  isEqual(object: any): boolean;
+	initWithRequestInSessionOptions(request: NSURLRequest, session: NSURLSession, options: SDWebImageDownloaderOptions): this;
 
-  isKindOfClass(aClass: typeof NSObject): boolean;
+	initWithRequestInSessionOptionsContext(request: NSURLRequest, session: NSURLSession, options: SDWebImageDownloaderOptions, context: NSDictionary<string, any>): this;
 
-  isMemberOfClass(aClass: typeof NSObject): boolean;
+	isEqual(object: any): boolean;
 
-  performSelector(aSelector: string): any;
+	isKindOfClass(aClass: typeof NSObject): boolean;
 
-  performSelectorWithObject(aSelector: string, object: any): any;
+	isMemberOfClass(aClass: typeof NSObject): boolean;
 
-  performSelectorWithObjectWithObject(
-    aSelector: string,
-    object1: any,
-    object2: any
-  ): any;
+	performSelector(aSelector: string): any;
 
-  respondsToSelector(aSelector: string): boolean;
+	performSelectorWithObject(aSelector: string, object: any): any;
 
-  retainCount(): number;
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
 
-  self(): this;
+	respondsToSelector(aSelector: string): boolean;
 
-  setCredential(value: NSURLCredential): void;
+	retainCount(): number;
 
-  setShouldDecompressImages(value: boolean): void;
+	self(): this;
 }
 
-interface SDWebImageDownloaderOperationInterface extends NSObjectProtocol {
-  credential: NSURLCredential;
+interface SDWebImageDownloaderOperationProtocol extends NSURLSessionDataDelegate, NSURLSessionTaskDelegate {
 
-  shouldDecompressImages: boolean;
+	credential?: NSURLCredential;
 
-  addHandlersForProgressCompleted(
-    progressBlock: (p1: number, p2: number, p3: NSURL) => void,
-    completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void
-  ): any;
+	dataTask?: NSURLSessionTask;
 
-  cancel(token: any): boolean;
+	minimumProgressInterval?: number;
 
-  initWithRequestInSessionOptions?(
-    request: NSURLRequest,
-    session: NSURLSession,
-    options: SDWebImageDownloaderOptions
-  ): SDWebImageDownloaderOperationInterface;
+	request: NSURLRequest;
 
-  setCredential(value: NSURLCredential): void;
+	response: NSURLResponse;
 
-  setShouldDecompressImages(value: boolean): void;
+	addHandlersForProgressCompleted(progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: boolean) => void): any;
+
+	cancel(token: any): boolean;
+
+	initWithRequestInSessionOptions?(request: NSURLRequest, session: NSURLSession, options: SDWebImageDownloaderOptions): SDWebImageDownloaderOperationProtocol;
+
+	initWithRequestInSessionOptionsContext?(request: NSURLRequest, session: NSURLSession, options: SDWebImageDownloaderOptions, context: NSDictionary<string, any>): SDWebImageDownloaderOperationProtocol;
 }
-declare var SDWebImageDownloaderOperationInterface: {
-  prototype: SDWebImageDownloaderOperationInterface;
+declare var SDWebImageDownloaderOperationProtocol: {
+
+	prototype: SDWebImageDownloaderOperationProtocol;
 };
 
 declare const enum SDWebImageDownloaderOptions {
-  LowPriority = 1,
 
-  ProgressiveDownload = 2,
+	LowPriority = 1,
 
-  UseNSURLCache = 4,
+	ProgressiveLoad = 2,
 
-  IgnoreCachedResponse = 8,
+	UseNSURLCache = 4,
 
-  ContinueInBackground = 16,
+	IgnoreCachedResponse = 8,
 
-  HandleCookies = 32,
+	ContinueInBackground = 16,
 
-  AllowInvalidSSLCertificates = 64,
+	HandleCookies = 32,
 
-  HighPriority = 128,
+	AllowInvalidSSLCertificates = 64,
 
-  ScaleDownLargeImages = 256
+	HighPriority = 128,
+
+	ScaleDownLargeImages = 256,
+
+	AvoidDecodeImage = 512,
+
+	DecodeFirstFrameOnly = 1024,
+
+	PreloadAllFrames = 2048
+}
+
+declare class SDWebImageDownloaderRequestModifier extends NSObject implements SDWebImageDownloaderRequestModifierProtocol {
+
+	static alloc(): SDWebImageDownloaderRequestModifier; // inherited from NSObject
+
+	static new(): SDWebImageDownloaderRequestModifier; // inherited from NSObject
+
+	static requestModifierWithBlock(block: (p1: NSURLRequest) => NSURLRequest): SDWebImageDownloaderRequestModifier;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	constructor(o: { block: (p1: NSURLRequest) => NSURLRequest; });
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	initWithBlock(block: (p1: NSURLRequest) => NSURLRequest): this;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	modifiedRequestWithRequest(request: NSURLRequest): NSURLRequest;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+}
+
+interface SDWebImageDownloaderRequestModifierProtocol extends NSObjectProtocol {
+
+	modifiedRequestWithRequest(request: NSURLRequest): NSURLRequest;
+}
+declare var SDWebImageDownloaderRequestModifierProtocol: {
+
+	prototype: SDWebImageDownloaderRequestModifierProtocol;
+};
+
+declare const enum SDWebImageError {
+
+	InvalidURL = 1000,
+
+	BadImageData = 1001,
+
+	CacheNotModified = 1002,
+
+	InvalidDownloadOperation = 2000,
+
+	InvalidDownloadStatusCode = 2001
 }
 
 declare var SDWebImageErrorDomain: string;
 
-declare var SDWebImageExternalCustomManagerKey: string;
+declare var SDWebImageErrorDownloadStatusCodeKey: string;
 
-declare class SDWebImageFrame extends NSObject {
-  static alloc(): SDWebImageFrame; // inherited from NSObject
+interface SDWebImageIndicator extends NSObjectProtocol {
 
-  static frameWithImageDuration(
-    image: UIImage,
-    duration: number
-  ): SDWebImageFrame;
+	indicatorView: UIView;
 
-  static new(): SDWebImageFrame; // inherited from NSObject
+	startAnimatingIndicator(): void;
 
-  readonly duration: number;
+	stopAnimatingIndicator(): void;
 
-  readonly image: UIImage;
+	updateIndicatorProgress?(progress: number): void;
 }
+declare var SDWebImageIndicator: {
 
-declare class SDWebImageGIFCoder extends NSObject implements SDWebImageCoder {
-  static alloc(): SDWebImageGIFCoder; // inherited from NSObject
-
-  static new(): SDWebImageGIFCoder; // inherited from NSObject
-
-  static sharedCoder(): SDWebImageGIFCoder;
-
-  readonly debugDescription: string; // inherited from NSObjectProtocol
-
-  readonly description: string; // inherited from NSObjectProtocol
-
-  readonly hash: number; // inherited from NSObjectProtocol
-
-  readonly isProxy: boolean; // inherited from NSObjectProtocol
-
-  readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
-
-  readonly; // inherited from NSObjectProtocol
-
-  canDecodeFromData(data: NSData): boolean;
-
-  canEncodeToFormat(format: SDImageFormat): boolean;
-
-  class(): typeof NSObject;
-
-  conformsToProtocol(aProtocol: any /* Protocol */): boolean;
-
-  decodedImageWithData(data: NSData): UIImage;
-
-  decompressedImageWithImageDataOptions(
-    image: UIImage,
-    data: interop.Pointer | interop.Reference<NSData>,
-    optionsDict: NSDictionary<string, NSObject>
-  ): UIImage;
-
-  encodedDataWithImageFormat(image: UIImage, format: SDImageFormat): NSData;
-
-  isEqual(object: any): boolean;
-
-  isKindOfClass(aClass: typeof NSObject): boolean;
-
-  isMemberOfClass(aClass: typeof NSObject): boolean;
-
-  performSelector(aSelector: string): any;
-
-  performSelectorWithObject(aSelector: string, object: any): any;
-
-  performSelectorWithObjectWithObject(
-    aSelector: string,
-    object1: any,
-    object2: any
-  ): any;
-
-  respondsToSelector(aSelector: string): boolean;
-
-  retainCount(): number;
-
-  self(): this;
-}
-
-declare class SDWebImageImageIOCoder extends NSObject
-  implements SDWebImageProgressiveCoder {
-  static alloc(): SDWebImageImageIOCoder; // inherited from NSObject
-
-  static new(): SDWebImageImageIOCoder; // inherited from NSObject
-
-  static sharedCoder(): SDWebImageImageIOCoder;
-
-  readonly debugDescription: string; // inherited from NSObjectProtocol
-
-  readonly description: string; // inherited from NSObjectProtocol
-
-  readonly hash: number; // inherited from NSObjectProtocol
-
-  readonly isProxy: boolean; // inherited from NSObjectProtocol
-
-  readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
-
-  readonly; // inherited from NSObjectProtocol
-
-  canDecodeFromData(data: NSData): boolean;
-
-  canEncodeToFormat(format: SDImageFormat): boolean;
-
-  canIncrementallyDecodeFromData(data: NSData): boolean;
-
-  class(): typeof NSObject;
-
-  conformsToProtocol(aProtocol: any /* Protocol */): boolean;
-
-  decodedImageWithData(data: NSData): UIImage;
-
-  decompressedImageWithImageDataOptions(
-    image: UIImage,
-    data: interop.Pointer | interop.Reference<NSData>,
-    optionsDict: NSDictionary<string, NSObject>
-  ): UIImage;
-
-  encodedDataWithImageFormat(image: UIImage, format: SDImageFormat): NSData;
-
-  incrementallyDecodedImageWithDataFinished(
-    data: NSData,
-    finished: boolean
-  ): UIImage;
-
-  isEqual(object: any): boolean;
-
-  isKindOfClass(aClass: typeof NSObject): boolean;
-
-  isMemberOfClass(aClass: typeof NSObject): boolean;
-
-  performSelector(aSelector: string): any;
-
-  performSelectorWithObject(aSelector: string, object: any): any;
-
-  performSelectorWithObjectWithObject(
-    aSelector: string,
-    object1: any,
-    object2: any
-  ): any;
-
-  respondsToSelector(aSelector: string): boolean;
-
-  retainCount(): number;
-
-  self(): this;
-}
-
-declare var SDWebImageInternalSetImageGroupKey: string;
+	prototype: SDWebImageIndicator;
+};
 
 declare class SDWebImageManager extends NSObject {
-  static alloc(): SDWebImageManager; // inherited from NSObject
 
-  static new(): SDWebImageManager; // inherited from NSObject
+	static alloc(): SDWebImageManager; // inherited from NSObject
 
-  static sharedManager(): SDWebImageManager;
+	static new(): SDWebImageManager; // inherited from NSObject
 
-  cacheKeyFilter: (p1: NSURL) => string;
+	cacheKeyFilter: SDWebImageCacheKeyFilterProtocol;
 
-  cacheSerializer: (p1: UIImage, p2: NSData, p3: NSURL) => NSData;
+	cacheSerializer: SDWebImageCacheSerializerProtocol;
 
-  delegate: SDWebImageManagerDelegate;
+	delegate: SDWebImageManagerDelegate;
 
-  readonly imageCache: SDImageCache;
+	readonly imageCache: SDImageCacheProtocol;
 
-  readonly imageDownloader: SDWebImageDownloader;
+	readonly imageLoader: SDImageLoader;
 
-  constructor(o: { cache: SDImageCache; downloader: SDWebImageDownloader });
+	readonly running: boolean;
 
-  cacheKeyForURL(url: NSURL): string;
+	transformer: SDImageTransformer;
 
-  cachedImageExistsForURLCompletion(
-    url: NSURL,
-    completionBlock: (p1: boolean) => void
-  ): void;
+	static defaultImageCache: SDImageCacheProtocol;
 
-  cancelAll(): void;
+	static defaultImageLoader: SDImageLoader;
 
-  diskImageExistsForURLCompletion(
-    url: NSURL,
-    completionBlock: (p1: boolean) => void
-  ): void;
+	static readonly sharedManager: SDWebImageManager;
 
-  initWithCacheDownloader(
-    cache: SDImageCache,
-    downloader: SDWebImageDownloader
-  ): this;
+	constructor(o: { cache: SDImageCacheProtocol; loader: SDImageLoader; });
 
-  isRunning(): boolean;
+	cacheKeyForURL(url: NSURL): string;
 
-  loadImageWithURLOptionsProgressCompleted(
-    url: NSURL,
-    options: SDWebImageOptions,
-    progressBlock: (p1: number, p2: number, p3: NSURL) => void,
-    completedBlock: (
-      p1: UIImage,
-      p2: NSData,
-      p3: NSError,
-      p4: SDImageCacheType,
-      p5: boolean,
-      p6: NSURL
-    ) => void
-  ): SDWebImageOperation;
+	cancelAll(): void;
 
-  saveImageToCacheForURL(image: UIImage, url: NSURL): void;
+	initWithCacheLoader(cache: SDImageCacheProtocol, loader: SDImageLoader): this;
+
+	loadImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: SDImageCacheType, p5: boolean, p6: NSURL) => void): SDWebImageCombinedOperation;
+
+	loadImageWithURLOptionsProgressCompleted(url: NSURL, options: SDWebImageOptions, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSData, p3: NSError, p4: SDImageCacheType, p5: boolean, p6: NSURL) => void): SDWebImageCombinedOperation;
 }
 
 interface SDWebImageManagerDelegate extends NSObjectProtocol {
-  imageManagerShouldBlockFailedURLWithError?(
-    imageManager: SDWebImageManager,
-    imageURL: NSURL,
-    error: NSError
-  ): boolean;
 
-  imageManagerShouldDownloadImageForURL?(
-    imageManager: SDWebImageManager,
-    imageURL: NSURL
-  ): boolean;
+	imageManagerShouldBlockFailedURLWithError?(imageManager: SDWebImageManager, imageURL: NSURL, error: NSError): boolean;
 
-  imageManagerTransformDownloadedImageWithURL?(
-    imageManager: SDWebImageManager,
-    image: UIImage,
-    imageURL: NSURL
-  ): UIImage;
+	imageManagerShouldDownloadImageForURL?(imageManager: SDWebImageManager, imageURL: NSURL): boolean;
 }
 declare var SDWebImageManagerDelegate: {
-  prototype: SDWebImageManagerDelegate;
+
+	prototype: SDWebImageManagerDelegate;
 };
 
 interface SDWebImageOperation extends NSObjectProtocol {
-  cancel(): void;
+
+	cancel(): void;
 }
 declare var SDWebImageOperation: {
-  prototype: SDWebImageOperation;
+
+	prototype: SDWebImageOperation;
 };
 
 declare const enum SDWebImageOptions {
-  RetryFailed = 1,
 
-  LowPriority = 2,
+	RetryFailed = 1,
 
-  CacheMemoryOnly = 4,
+	LowPriority = 2,
 
-  ProgressiveDownload = 8,
+	ProgressiveLoad = 4,
 
-  RefreshCached = 16,
+	RefreshCached = 8,
 
-  ContinueInBackground = 32,
+	ContinueInBackground = 16,
 
-  HandleCookies = 64,
+	HandleCookies = 32,
 
-  AllowInvalidSSLCertificates = 128,
+	AllowInvalidSSLCertificates = 64,
 
-  HighPriority = 256,
+	HighPriority = 128,
 
-  DelayPlaceholder = 512,
+	DelayPlaceholder = 256,
 
-  TransformAnimatedImage = 1024,
+	TransformAnimatedImage = 512,
 
-  AvoidAutoSetImage = 2048,
+	AvoidAutoSetImage = 1024,
 
-  ScaleDownLargeImages = 4096,
+	ScaleDownLargeImages = 2048,
 
-  QueryDataWhenInMemory = 8192,
+	QueryMemoryData = 4096,
 
-  QueryDiskSync = 16384,
+	QueryMemoryDataSync = 8192,
 
-  FromCacheOnly = 32768,
+	QueryDiskDataSync = 16384,
 
-  ForceTransition = 65536
+	FromCacheOnly = 32768,
+
+	FromLoaderOnly = 65536,
+
+	ForceTransition = 131072,
+
+	AvoidDecodeImage = 262144,
+
+	DecodeFirstFrameOnly = 524288,
+
+	PreloadAllFrames = 1048576
+}
+
+declare class SDWebImagePrefetchToken extends NSObject implements SDWebImageOperation {
+
+	static alloc(): SDWebImagePrefetchToken; // inherited from NSObject
+
+	static new(): SDWebImagePrefetchToken; // inherited from NSObject
+
+	readonly urls: NSArray<NSURL>;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	cancel(): void;
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
 }
 
 declare class SDWebImagePrefetcher extends NSObject {
-  static alloc(): SDWebImagePrefetcher; // inherited from NSObject
 
-  static new(): SDWebImagePrefetcher; // inherited from NSObject
+	static alloc(): SDWebImagePrefetcher; // inherited from NSObject
 
-  static sharedImagePrefetcher(): SDWebImagePrefetcher;
+	static new(): SDWebImagePrefetcher; // inherited from NSObject
 
-  delegate: SDWebImagePrefetcherDelegate;
+	context: NSDictionary<string, any>;
 
-  readonly manager: SDWebImageManager;
+	delegate: SDWebImagePrefetcherDelegate;
 
-  maxConcurrentDownloads: number;
+	delegateQueue: NSObject;
 
-  options: SDWebImageOptions;
+	readonly manager: SDWebImageManager;
 
-  prefetcherQueue: NSObject;
+	options: SDWebImageOptions;
 
-  constructor(o: { imageManager: SDWebImageManager });
+	static readonly sharedImagePrefetcher: SDWebImagePrefetcher;
 
-  cancelPrefetching(): void;
+	constructor(o: { imageManager: SDWebImageManager; });
 
-  initWithImageManager(manager: SDWebImageManager): this;
+	cancelPrefetching(): void;
 
-  prefetchURLs(urls: NSArray<NSURL>): void;
+	initWithImageManager(manager: SDWebImageManager): this;
 
-  prefetchURLsProgressCompleted(
-    urls: NSArray<NSURL>,
-    progressBlock: (p1: number, p2: number) => void,
-    completionBlock: (p1: number, p2: number) => void
-  ): void;
+	prefetchURLs(urls: NSArray<NSURL> | NSURL[]): SDWebImagePrefetchToken;
+
+	prefetchURLsProgressCompleted(urls: NSArray<NSURL> | NSURL[], progressBlock: (p1: number, p2: number) => void, completionBlock: (p1: number, p2: number) => void): SDWebImagePrefetchToken;
 }
 
 interface SDWebImagePrefetcherDelegate extends NSObjectProtocol {
-  imagePrefetcherDidFinishWithTotalCountSkippedCount?(
-    imagePrefetcher: SDWebImagePrefetcher,
-    totalCount: number,
-    skippedCount: number
-  ): void;
 
-  imagePrefetcherDidPrefetchURLFinishedCountTotalCount?(
-    imagePrefetcher: SDWebImagePrefetcher,
-    imageURL: NSURL,
-    finishedCount: number,
-    totalCount: number
-  ): void;
+	imagePrefetcherDidFinishWithTotalCountSkippedCount?(imagePrefetcher: SDWebImagePrefetcher, totalCount: number, skippedCount: number): void;
+
+	imagePrefetcherDidPrefetchURLFinishedCountTotalCount?(imagePrefetcher: SDWebImagePrefetcher, imageURL: NSURL, finishedCount: number, totalCount: number): void;
 }
 declare var SDWebImagePrefetcherDelegate: {
-  prototype: SDWebImagePrefetcherDelegate;
+
+	prototype: SDWebImagePrefetcherDelegate;
 };
+
+declare class SDWebImageProgressIndicator extends NSObject implements SDWebImageIndicator {
+
+	static alloc(): SDWebImageProgressIndicator; // inherited from NSObject
+
+	static new(): SDWebImageProgressIndicator; // inherited from NSObject
+
+	readonly indicatorView: UIProgressView;
+
+	static readonly barIndicator: SDWebImageProgressIndicator;
+
+	static readonly defaultIndicator: SDWebImageProgressIndicator;
+
+	readonly debugDescription: string; // inherited from NSObjectProtocol
+
+	readonly description: string; // inherited from NSObjectProtocol
+
+	readonly hash: number; // inherited from NSObjectProtocol
+
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
+
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
+
+	class(): typeof NSObject;
+
+	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
+
+	isEqual(object: any): boolean;
+
+	isKindOfClass(aClass: typeof NSObject): boolean;
+
+	isMemberOfClass(aClass: typeof NSObject): boolean;
+
+	performSelector(aSelector: string): any;
+
+	performSelectorWithObject(aSelector: string, object: any): any;
+
+	performSelectorWithObjectWithObject(aSelector: string, object1: any, object2: any): any;
+
+	respondsToSelector(aSelector: string): boolean;
+
+	retainCount(): number;
+
+	self(): this;
+
+	startAnimatingIndicator(): void;
+
+	stopAnimatingIndicator(): void;
+
+	updateIndicatorProgress(progress: number): void;
+}
 
 declare var SDWebImageProgressUnitCountUnknown: number;
 
-interface SDWebImageProgressiveCoder extends SDWebImageCoder {
-  canIncrementallyDecodeFromData(data: NSData): boolean;
-
-  incrementallyDecodedImageWithDataFinished(
-    data: NSData,
-    finished: boolean
-  ): UIImage;
-}
-declare var SDWebImageProgressiveCoder: {
-  prototype: SDWebImageProgressiveCoder;
-};
-
 declare class SDWebImageTransition extends NSObject {
-  static alloc(): SDWebImageTransition; // inherited from NSObject
 
-  static new(): SDWebImageTransition; // inherited from NSObject
+	static alloc(): SDWebImageTransition; // inherited from NSObject
 
-  animationOptions: UIViewAnimationOptions;
+	static new(): SDWebImageTransition; // inherited from NSObject
 
-  animations: (p1: UIView, p2: UIImage) => void;
+	animationOptions: UIViewAnimationOptions;
 
-  avoidAutoSetImage: boolean;
+	animations: (p1: UIView, p2: UIImage) => void;
 
-  completion: (p1: boolean) => void;
+	avoidAutoSetImage: boolean;
 
-  duration: number;
+	completion: (p1: boolean) => void;
 
-  prepares: (
-    p1: UIView,
-    p2: UIImage,
-    p3: NSData,
-    p4: SDImageCacheType,
-    p5: NSURL
-  ) => void;
+	duration: number;
 
-  static readonly curlDownTransition: SDWebImageTransition;
+	prepares: (p1: UIView, p2: UIImage, p3: NSData, p4: SDImageCacheType, p5: NSURL) => void;
 
-  static readonly curlUpTransition: SDWebImageTransition;
+	static readonly curlDownTransition: SDWebImageTransition;
 
-  static readonly fadeTransition: SDWebImageTransition;
+	static readonly curlUpTransition: SDWebImageTransition;
 
-  static readonly flipFromBottomTransition: SDWebImageTransition;
+	static readonly fadeTransition: SDWebImageTransition;
 
-  static readonly flipFromLeftTransition: SDWebImageTransition;
+	static readonly flipFromBottomTransition: SDWebImageTransition;
 
-  static readonly flipFromRightTransition: SDWebImageTransition;
+	static readonly flipFromLeftTransition: SDWebImageTransition;
 
-  static readonly flipFromTopTransition: SDWebImageTransition;
+	static readonly flipFromRightTransition: SDWebImageTransition;
+
+	static readonly flipFromTopTransition: SDWebImageTransition;
 }
 
-declare var SDWebImageVersionNumber: number;
+declare var WebImageVersionNumber: number;
 
-declare var SDWebImageVersionString: interop.Reference<number>;
+declare var WebImageVersionString: interop.Reference<number>;
+
+declare interface UIImageView {
+
+
+	sd_setHighlightedImageWithURL(url: NSURL): void;
+
+	sd_setHighlightedImageWithURLCompleted(url: NSURL, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setHighlightedImageWithURLOptions(url: NSURL, options: SDWebImageOptions): void;
+
+	sd_setHighlightedImageWithURLOptionsCompleted(url: NSURL, options: SDWebImageOptions, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setHighlightedImageWithURLOptionsContext(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>): void;
+
+	sd_setHighlightedImageWithURLOptionsContextProgressCompleted(url: NSURL, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setHighlightedImageWithURLOptionsProgressCompleted(url: NSURL, options: SDWebImageOptions, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setImageWithURL(url: NSURL): void;
+
+	sd_setImageWithURLCompleted(url: NSURL, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setImageWithURLPlaceholderImage(url: NSURL, placeholder: UIImage): void;
+
+	sd_setImageWithURLPlaceholderImageCompleted(url: NSURL, placeholder: UIImage, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setImageWithURLPlaceholderImageOptions(url: NSURL, placeholder: UIImage, options: SDWebImageOptions): void;
+
+	sd_setImageWithURLPlaceholderImageOptionsCompleted(url: NSURL, placeholder: UIImage, options: SDWebImageOptions, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setImageWithURLPlaceholderImageOptionsContext(url: NSURL, placeholder: UIImage, options: SDWebImageOptions, context: NSDictionary<string, any>): void;
+
+	sd_setImageWithURLPlaceholderImageOptionsContextProgressCompleted(url: NSURL, placeholder: UIImage, options: SDWebImageOptions, context: NSDictionary<string, any>, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+	sd_setImageWithURLPlaceholderImageOptionsProgressCompleted(url: NSURL, placeholder: UIImage, options: SDWebImageOptions, progressBlock: (p1: number, p2: number, p3: NSURL) => void, completedBlock: (p1: UIImage, p2: NSError, p3: SDImageCacheType, p4: NSURL) => void): void;
+
+}

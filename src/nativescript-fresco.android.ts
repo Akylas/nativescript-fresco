@@ -527,6 +527,15 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
         builder.setFailureImage(failureImageDrawable);
       }
 
+      if (this.tintColor) {
+        builder.setActualImageColorFilter(
+          new android.graphics.PorterDuffColorFilter(
+            this.tintColor.android,
+            android.graphics.PorterDuff.Mode.MULTIPLY
+          )
+        );
+      }
+
       if (this.placeholderImageUri && placeholderImageDrawable) {
         builder.setPlaceholderImage(placeholderImageDrawable);
       }
@@ -619,30 +628,36 @@ export class FrescoDrawee extends commonModule.FrescoDrawee {
     return drawable;
   }
   [commonModule.FrescoDrawee.tintColorProperty.setNative](value: Color) {
-      console.log('test', 'tintColorProperty', value);
-    if (value === undefined) {
-        this._android.clearColorFilter();
-    } else {
-        this._android.setColorFilter(value.android);
+    console.log("test", "tintColorProperty", value);
+    this.updateHierarchy();
+  }
+  [commonModule.FrescoDrawee.stretchProperty.setNative](
+    value: commonModule.Stretch
+  ) {
+    switch (value) {
+      case "aspectFit":
+        this.nativeViewProtected.setScaleType(
+          android.widget.ImageView.ScaleType.FIT_CENTER
+        );
+        break;
+      case "aspectFill":
+        this.nativeViewProtected.setScaleType(
+          android.widget.ImageView.ScaleType.CENTER_CROP
+        );
+        break;
+      case "fill":
+        this.nativeViewProtected.setScaleType(
+          android.widget.ImageView.ScaleType.FIT_XY
+        );
+        break;
+      case "none":
+      default:
+        this.nativeViewProtected.setScaleType(
+          android.widget.ImageView.ScaleType.MATRIX
+        );
+        break;
     }
   }
-  [commonModule.FrescoDrawee.stretchProperty.setNative](value: commonModule.Stretch) {
-    switch (value) {
-        case 'aspectFit':
-            this.nativeViewProtected.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
-            break;
-        case 'aspectFill':
-            this.nativeViewProtected.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-            break;
-        case 'fill':
-            this.nativeViewProtected.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
-            break;
-        case 'none':
-        default:
-            this.nativeViewProtected.setScaleType(android.widget.ImageView.ScaleType.MATRIX);
-            break;
-    }
-}
 }
 
 class GenericDraweeHierarchyBuilder {
@@ -661,6 +676,17 @@ class GenericDraweeHierarchyBuilder {
     }
 
     this.nativeBuilder.setPlaceholderImage(drawable);
+
+    return this;
+  }
+  public setActualImageColorFilter(
+    filter: android.graphics.ColorFilter
+  ): GenericDraweeHierarchyBuilder {
+    if (!application.android) {
+      return null;
+    }
+
+    this.nativeBuilder.setActualImageColorFilter(filter);
 
     return this;
   }
